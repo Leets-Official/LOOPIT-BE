@@ -31,7 +31,7 @@ jobs:
           docker push loopit543/loopit-backend:latest
 
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
@@ -42,3 +42,4 @@ jobs:
             echo "${{ secrets.ENV_TEST }}" | base64 -d > .env.test
             docker-compose down
             docker-compose up -d
+            exit 0
