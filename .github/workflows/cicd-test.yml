@@ -37,6 +37,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            cd ~/loopit
             docker pull loopit543/loopit-backend:latest
             echo "${{ secrets.ENV_TEST }}" > .env.test
             docker-compose down
