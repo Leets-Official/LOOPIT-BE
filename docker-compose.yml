@@ -26,7 +26,7 @@ services:
     container_name: loopit-backend
     restart: always
     env_file:
-      - .env.test.test
+      - .env.test
     ports:
       - "8080:8080"
     depends_on:
