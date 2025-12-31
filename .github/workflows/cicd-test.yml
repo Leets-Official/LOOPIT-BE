@@ -39,6 +39,6 @@ jobs:
           script: |
             cd ~/loopit
             docker pull loopit543/loopit-backend:latest
-            echo "${{ secrets.ENV_TEST }}" > .env.test
+            echo "${{ secrets.ENV_TEST }}" | base64 -d > .env.test
             docker-compose down
             docker-compose up -d
