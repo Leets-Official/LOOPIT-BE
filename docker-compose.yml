@@ -5,6 +5,8 @@ services:
     image: mysql:8.0
     container_name: loopit-mysql
     restart: always
+    env_file:
+      - .env.test
     environment:
       MYSQL_DATABASE: loopit
       MYSQL_USER: ${DB_USERNAME}
