@@ -1,6 +1,6 @@
 package com.example.loopitbe.entity;
 
-import com.example.loopitbe.dto.request.UserCreateRequest;
+import com.example.loopitbe.dto.request.KakaoUserCreateRequest;
 import com.example.loopitbe.enums.LoginProvider;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -32,11 +32,11 @@ public class User {
     // 기본 생성자
     protected User() {}
 
-    // 카카오 & 이메일 회원가입
-    public static User createUser(UserCreateRequest dto, LoginProvider loginMethod) {
+    // 카카오  회원가입
+    public static User createKakaoUser(KakaoUserCreateRequest dto) {
         User user = new User();
-        user.loginMethod = loginMethod;
-        user.kakaoId =dto.getKakaoId();
+        user.loginMethod = LoginProvider.KAKAO;
+        user.kakaoId = dto.getKakaoId();
         user.nickname = dto.getNickname();
         user.createdAt = LocalDateTime.now();
         return user;

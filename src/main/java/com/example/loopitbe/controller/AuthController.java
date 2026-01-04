@@ -1,7 +1,7 @@
 package com.example.loopitbe.controller;
 
 import com.example.loopitbe.common.ApiResponse;
-import com.example.loopitbe.dto.request.UserCreateRequest;
+import com.example.loopitbe.dto.request.KakaoUserCreateRequest;
 import com.example.loopitbe.dto.response.KakaoLoginResponse;
 import com.example.loopitbe.dto.response.UserResponse;
 import com.example.loopitbe.service.AuthService;
@@ -26,9 +26,9 @@ public class AuthController {
             summary = "신규 회원 생성",
             description = "회원가입 성공 시 회원 정보 return"
     )
-    @PostMapping("/register")
-    public ResponseEntity<ApiResponse<UserResponse>> createUser(@Valid @RequestBody UserCreateRequest dto){
-        UserResponse response = service.createUser(dto);
+    @PostMapping("/register/kakao")
+    public ResponseEntity<ApiResponse<UserResponse>> createUser(@Valid @RequestBody KakaoUserCreateRequest dto){
+        UserResponse response = service.createKakaoUser(dto);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
