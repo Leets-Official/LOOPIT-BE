@@ -4,6 +4,7 @@ import com.example.loopitbe.dto.request.UserCreateRequest;
 import com.example.loopitbe.dto.response.KakaoLoginResponse;
 import com.example.loopitbe.dto.response.UserResponse;
 import com.example.loopitbe.entity.User;
+import com.example.loopitbe.enums.LoginProvider;
 import com.example.loopitbe.exception.CustomException;
 import com.example.loopitbe.exception.ErrorCode;
 import com.example.loopitbe.repository.UserRepository;
@@ -26,7 +27,7 @@ public class AuthService {
         if (userRepository.existsUserByNickname(dto.getNickname()))
             throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
 
-        User newUser = User.createUser(dto);
+        User newUser = User.createUser(dto, LoginProvider.KAKAO);
 
         return UserResponse.toDTO(userRepository.save(newUser));
     }

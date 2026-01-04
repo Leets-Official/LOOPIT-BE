@@ -18,4 +18,16 @@ public class UserResponse {
 
         return dto;
     }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public String getKakaoId() {
+        return kakaoId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

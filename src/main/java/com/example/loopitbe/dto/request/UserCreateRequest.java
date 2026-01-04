@@ -1,10 +1,7 @@
 package com.example.loopitbe.dto.request;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-
-import java.time.LocalDateTime;
 
 public class UserCreateRequest {
     // 회원 가입 시 입력 정보는 후에 와이어 프레임 나오면 리펙토링

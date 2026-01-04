@@ -19,8 +19,10 @@ import org.springframework.web.client.RestTemplate;
 public class KakaoOAuthService {
     @Value("${kakao.auth.client}")
     private String client;
-    @Value("${kakao.auth.redirectLogin}")
-    private String redirectLogin;
+    @Value("${kakao.auth.client_secret}")
+    private String clientSecret;
+    @Value("${kakao.auth.redirect}")
+    private String redirect;
 
     private final ObjectMapper objectMapper;
 
@@ -37,18 +39,21 @@ public class KakaoOAuthService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", client);
-        params.add("redirect_uri", redirectLogin);
+        params.add("client_secret", clientSecret);
+        params.add("redirect_uri", redirect);
         params.add("code", accessCode);
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                "https://kauth.kakao.com/oauth/token",
-                HttpMethod.POST,
-                kakaoTokenRequest,
-                String.class);
+                    "https://kauth.kakao.com/oauth/token",
+                    HttpMethod.POST,
+                    kakaoTokenRequest,
+                    String.class
+            );
 
         String accessToken = null;
+
 
         try {
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
@@ -57,6 +62,7 @@ public class KakaoOAuthService {
         catch (JsonProcessingException e) {
             throw new CustomException(ErrorCode.JSON_PARSE_ERROR);
         }
+
         return accessToken;
     }
 
