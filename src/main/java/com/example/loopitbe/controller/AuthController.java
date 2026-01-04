@@ -3,7 +3,7 @@ package com.example.loopitbe.controller;
 import com.example.loopitbe.common.ApiResponse;
 import com.example.loopitbe.dto.request.KakaoUserCreateRequest;
 import com.example.loopitbe.dto.response.KakaoLoginResponse;
-import com.example.loopitbe.dto.response.UserResponse;
+import com.example.loopitbe.dto.response.KakaoUserResponse;
 import com.example.loopitbe.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,12 +27,12 @@ public class AuthController {
             description = "회원가입 성공 시 회원 정보 return"
     )
     @PostMapping("/register/kakao")
-    public ResponseEntity<ApiResponse<UserResponse>> createUser(@Valid @RequestBody KakaoUserCreateRequest dto){
-        UserResponse response = service.createKakaoUser(dto);
+    public ResponseEntity<ApiResponse<KakaoUserResponse>> createKakaoUser(@Valid @RequestBody KakaoUserCreateRequest dto){
+        KakaoUserResponse response = service.createKakaoUser(dto);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.ok(response, "회원가입 성공."));
+                .body(ApiResponse.ok(response, "카카오 유저 회원가입 성공."));
     }
 
     @Operation(

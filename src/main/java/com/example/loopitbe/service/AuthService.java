@@ -2,7 +2,7 @@ package com.example.loopitbe.service;
 
 import com.example.loopitbe.dto.request.KakaoUserCreateRequest;
 import com.example.loopitbe.dto.response.KakaoLoginResponse;
-import com.example.loopitbe.dto.response.UserResponse;
+import com.example.loopitbe.dto.response.KakaoUserResponse;
 import com.example.loopitbe.entity.User;
 import com.example.loopitbe.exception.CustomException;
 import com.example.loopitbe.exception.ErrorCode;
@@ -19,7 +19,7 @@ public class AuthService {
         this.kakaoOAuthService = kakaoOAuthService;
     }
 
-    public UserResponse createKakaoUser(KakaoUserCreateRequest dto) {
+    public KakaoUserResponse createKakaoUser(KakaoUserCreateRequest dto) {
         if (userRepository.existsUserByKakaoId(dto.getKakaoId()))
                 throw new CustomException(ErrorCode.DUPLICATED_KAKAO_ID);
 
@@ -28,7 +28,7 @@ public class AuthService {
 
         User newUser = User.createKakaoUser(dto);
 
-        return UserResponse.toDTO(userRepository.save(newUser));
+        return KakaoUserResponse.toDTO(userRepository.save(newUser));
     }
 
     public KakaoLoginResponse loginWithKakao(String accessCode){
