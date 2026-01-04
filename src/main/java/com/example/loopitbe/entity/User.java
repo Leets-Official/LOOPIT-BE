@@ -1,11 +1,9 @@
 package com.example.loopitbe.entity;
 
-import com.example.loopitbe.dto.request.UserCreateRequest;
+import com.example.loopitbe.dto.request.KakaoUserCreateRequest;
+import com.example.loopitbe.enums.LoginProvider;
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "users") // DB 테이블명
@@ -19,7 +17,8 @@ public class User {
     private String nickname;
 
     @Column(name = "login_method", nullable = false)
-    private String loginMethod;
+    @Enumerated(EnumType.STRING)
+    private LoginProvider loginMethod;
 
     @Column(name = "kakao_id", unique = true)
     private String kakaoId;
@@ -33,10 +32,11 @@ public class User {
     // 기본 생성자
     protected User() {}
 
-    // 카카오 & 이메일 회원가입
-    public static User createUser(UserCreateRequest dto){
+    // 카카오  회원가입
+    public static User createKakaoUser(KakaoUserCreateRequest dto) {
         User user = new User();
-        user.kakaoId =dto.getKakaoId();
+        user.loginMethod = LoginProvider.KAKAO;
+        user.kakaoId = dto.getKakaoId();
         user.nickname = dto.getNickname();
         user.createdAt = LocalDateTime.now();
         return user;
@@ -54,7 +54,7 @@ public class User {
         return kakaoId;
     }
 
-    public String getLoginMethod() {
+    public LoginProvider getLoginMethod() {
         return loginMethod;
     }
 
