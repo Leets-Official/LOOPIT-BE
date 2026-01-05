@@ -7,6 +7,8 @@ import com.example.loopitbe.dto.response.KakaoUserResponse;
 import com.example.loopitbe.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,14 +42,28 @@ public class AuthController {
             description = "카카오 로그인 성공 시 JWT 인증처리, registered 필드로 서비스 가입 여부 return"
     )
     @GetMapping("/login/kakao")
-    public ResponseEntity<ApiResponse<KakaoLoginResponse>> kakaoLogin(@RequestParam("code") String accessCode) {
-        KakaoLoginResponse response = service.loginWithKakao(accessCode);
+    public ResponseEntity<ApiResponse<KakaoLoginResponse>> kakaoLogin(
+            @RequestParam("code") String accessCode,
+            HttpServletResponse response
+    ) {
+        KakaoLoginResponse result = service.loginWithKakao(accessCode, response);
 
-        // 가입된 카카오 아이디 인 경우
-        if (response.getRegistered()){
-            // jwt 인증 처리
-        }
+        return ResponseEntity.ok(ApiResponse.ok(result, "카카오 로그인 성공."));
+    }
 
-        return ResponseEntity.ok(ApiResponse.ok(response, "카카오 로그인 성공."));
+    @Operation(
+            summary = "refresh token 재발급",
+            description = "refresh token을 검증한 후 새로운 access token을 재발급하며, 필요 시 refresh token도 함께 갱신"
+    )
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<Object>> refresh(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        service.refresh(request, response);
+
+        return ResponseEntity.ok(
+                ApiResponse.ok(null, "토큰 재발급 성공.")
+        );
     }
 }
