@@ -1,2 +1,2 @@
 # LOOPIT-BE
-LOOPIT 백엔드 레포지토리
+📱LOOPIT📱 IT 수리 및 중고판매 플랫폼 서비스
