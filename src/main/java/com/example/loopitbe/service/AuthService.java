@@ -151,4 +151,20 @@ public class AuthService {
 
         throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
     }
+
+    // 로그아웃
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+
+        String refreshToken = extractRefreshToken(request);
+
+        // DB에 저장된 Refresh Token 삭제
+        refreshTokenRepository.findByToken(refreshToken)
+                .ifPresent(refreshTokenRepository::delete);
+
+        // Refresh Token 쿠키 만료
+        response.addHeader(
+                "Set-Cookie",
+                CookieUtil.deleteRefreshToken().toString()
+        );
+    }
 }

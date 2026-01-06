@@ -66,4 +66,20 @@ public class AuthController {
                 ApiResponse.ok(null, "토큰 재발급 성공.")
         );
     }
+
+    @Operation(
+            summary = "로그아웃",
+            description = "Refresh Token을 삭제하고 쿠키를 만료시켜 로그아웃 처리"
+    )
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Object>> logout(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        service.logout(request, response);
+
+        return ResponseEntity.ok(
+                ApiResponse.ok(null, "로그아웃 성공.")
+        );
+    }
 }
