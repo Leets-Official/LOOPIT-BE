@@ -10,7 +10,7 @@ import java.util.Date;
 public class JwtProvider {
 
     private final String secretKey = System.getenv("JWT_TOKEN");
-    private final long ACCESS_TOKEN_EXPIRE = 1000L * 60 * 60 * 6;   // 6시간
+    private final long ACCESS_TOKEN_EXPIRE = 1000L * 60 * 30; // 30분
     private final long REFRESH_TOKEN_EXPIRE = 1000L * 60 * 60 * 24 * 7; // 7일
 
     public String createAccessToken(Long userId) {

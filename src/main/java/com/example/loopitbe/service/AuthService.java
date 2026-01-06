@@ -82,13 +82,16 @@ public class AuthService {
                 )
         );
 
+        // Access Token → Header
+        response.setHeader("Authorization", "Bearer " + accessToken);
+
+        // Refresh Token → HttpOnly Cookie
         response.addHeader(
                 "Set-Cookie",
-                CookieUtil.create("accessToken", accessToken, 60 * 60 * 6).toString()
-        );
-        response.addHeader(
-                "Set-Cookie",
-                CookieUtil.create("refreshToken", refreshToken, 60 * 60 * 24 * 7).toString()
+                CookieUtil.createRefreshToken(
+                        refreshToken,
+                        60 * 60 * 24 * 7
+                ).toString()
         );
     }
 
@@ -121,13 +124,16 @@ public class AuthService {
                 )
         );
 
+        // Access Token → Header
+        response.setHeader("Authorization", "Bearer " + newAccessToken);
+
+        // Refresh Token → Cookie
         response.addHeader(
                 "Set-Cookie",
-                CookieUtil.create("accessToken", newAccessToken, 60 * 60 * 6).toString()
-        );
-        response.addHeader(
-                "Set-Cookie",
-                CookieUtil.create("refreshToken", newRefreshToken, 60 * 60 * 24 * 7).toString()
+                CookieUtil.createRefreshToken(
+                        newRefreshToken,
+                        60 * 60 * 24 * 7
+                ).toString()
         );
     }
 

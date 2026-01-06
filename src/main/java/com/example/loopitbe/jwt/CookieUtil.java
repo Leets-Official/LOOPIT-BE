@@ -4,12 +4,11 @@ import org.springframework.http.ResponseCookie;
 
 public class CookieUtil {
 
-    public static ResponseCookie create(
-            String name,
+    public static ResponseCookie createRefreshToken(
             String value,
             long maxAge
     ) {
-        return ResponseCookie.from(name, value)
+        return ResponseCookie.from("refreshToken", value)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
