@@ -1,5 +1,6 @@
 package com.example.loopitbe.jwt;
 
+import com.example.loopitbe.exception.CustomException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,17 +31,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String accessToken = resolveToken(request);
 
-        if (accessToken != null && jwtProvider.validateToken(accessToken)) {
-            Long userId = jwtProvider.getUserId(accessToken);
+        try {
+            if (accessToken != null && jwtProvider.validateToken(accessToken)) {
+                Long userId = jwtProvider.getUserId(accessToken);
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            userId,     // principal
-                            null,
-                            List.of(new SimpleGrantedAuthority("ROLE_USER"))
-                    );
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userId,     // principal
+                                null,
+                                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                        );
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        } catch (CustomException e) {
+            SecurityContextHolder.clearContext(); // 401 에러 발생 유도
+            request.setAttribute("exception", e.getErrorCode()); // 에러코드 전달
         }
 
         filterChain.doFilter(request, response);

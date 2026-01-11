@@ -1,5 +1,7 @@
 package com.example.loopitbe.jwt;
 
+import com.example.loopitbe.exception.CustomException;
+import com.example.loopitbe.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.*;
@@ -24,11 +26,10 @@ public class JwtProvider {
 
     @PostConstruct
     public void init() {
-        // 환경변수가 비어있을 경우를 대비한 방어 로직 (선택사항)
         if (secretKeyString == null || secretKeyString.length() < 32) {
             throw new RuntimeException("JWT_TOKEN 환경변수가 설정되지 않았거나 32자(256bit) 미만입니다.");
         }
-        // String -> Key 객체 변환 (UTF-8 바이트 처리)
+        // String -> Key 객체 변환
         this.secretKey = Keys.hmacShaKeyFor(secretKeyString.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -58,9 +59,14 @@ public class JwtProvider {
                     .build()
                     .parseClaimsJws(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            System.out.println("JWT Validation Error: " + e.getMessage());
-            return false;
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
+        } catch (ExpiredJwtException e) {
+            throw new CustomException(ErrorCode.EXPIRED_ACCESS_TOKEN);
+        } catch (UnsupportedJwtException e) {
+            throw new CustomException(ErrorCode.UNSUPPORTED_JWT);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(ErrorCode.EMPTY_JWT);
         }
     }
 
