@@ -42,11 +42,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      # 5. Docker 이미지 빌드 & 푸시
-      - name: Build & Push Docker Image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/loopit-dev:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/loopit-dev:latest
+      - name: 6. Docker image Push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          dockerfile: Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/server:latest
 
   # CD: Deploy to EC2
   cd:
@@ -62,21 +64,29 @@ jobs:
         run: |
           echo "${{ secrets.ENV_TEST }}" > .env.test
 
-      # .env.test와 docker-compose 파일을 EC2로 전송
-      # strip_components: 1을 사용하여 docker/ 폴더 경로를 제외하고 파일만 전송합니다.
-      - name: Copy Deployment Files to EC2
+      - name: .env 파일 EC2에 전송
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          # 루트의 .env.test와 docker 폴더 안의 yml을 동시에 전송
-          source: ".env.test,./docker/docker-compose.dev.yml"
+          source: ".env.test"
           target: "/home/ubuntu/loopit-dev/docker/"
-          strip_components: 1
-          overwrite: true
 
-      # /home/ubuntu/loopit-dev/docker/ 경로 파일 확인
+
+      - name: Check docker-compose.dev.yml exists
+        run: ls -al ./docker/
+
+      # 6. docker-compose.dev.yml EC2로 전송
+      - name: Copy docker-compose.dev.yml to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "./docker/docker-compose.dev.yml"
+          target: "/home/ubuntu/loopit-dev/docker/"
+
       - name: Check files on EC2
         uses: appleboy/ssh-action@master
         with:
@@ -87,7 +97,7 @@ jobs:
             echo "Listing files in /home/ubuntu/loopit-dev/docker/"
             ls -al /home/ubuntu/loopit-dev/docker/
 
-      # 7. EC2에서 컨테이너 재기동.
+      # 7. EC2에서 컨테이너 재기동
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
