@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  app:
+    container_name: loopit-app
+    restart: always
+    environment:
+      TZ: Asia/Seoul
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: loopit-mysql
+    restart: always
+    environment:
+      TZ: Asia/Seoul
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
