@@ -105,6 +105,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/loopit-dev/docker/
-            docker compose -f docker-compose.dev.yml down
+            echo "Stopping existing containers..."
+            docker compose -f docker-compose.dev.yml down || true
+            echo "Pulling latest images..."
             docker compose -f docker-compose.dev.yml pull
+            echo "Starting containers..."
             docker compose -f docker-compose.dev.yml up -d
