@@ -62,28 +62,19 @@ jobs:
         run: |
           echo "${{ secrets.ENV_TEST }}" > .env.test
 
-      - name: .env 파일 EC2에 전송
+      # .env.test와 docker-compose 파일을 EC2로 전송
+      # strip_components: 1을 사용하여 docker/ 폴더 경로를 제외하고 파일만 전송합니다.
+      - name: Copy Deployment Files to EC2
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: ".env.test"
+          # 루트의 .env.test와 docker 폴더 안의 yml을 동시에 전송
+          source: ".env.test,./docker/docker-compose.dev.yml"
           target: "/home/ubuntu/loopit-dev/docker/"
-
-
-      - name: Check docker-compose.dev.yml exists
-        run: ls -al ./docker/
-
-      # 6. docker-compose.dev.yml EC2로 전송
-      - name: Copy docker-compose.dev.yml to EC2
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "./docker/docker-compose.dev.yml"
-          target: "/home/ubuntu/loopit-dev/docker/docker-compose.dev.yml"
+          strip_components: 1
+          overwrite: true
 
       # /home/ubuntu/loopit-dev/docker/ 경로 파일 확인
       - name: Check files on EC2
@@ -97,7 +88,6 @@ jobs:
             ls -al /home/ubuntu/loopit-dev/docker/
 
       # 7. EC2에서 컨테이너 재기동
-      # 7. EC2에서 컨테이너 재기동
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
@@ -105,35 +95,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # EC2에서 디렉토리 확인
-            echo "Checking /home/ubuntu/loopit-dev/docker/ directory..."
-            ls -al /home/ubuntu/loopit-dev/docker/ || mkdir -p /home/ubuntu/loopit-dev/docker/
-
-            # SCP로 올린 파일 존재 확인
-            echo "Checking files..."
-            if [ -f /home/ubuntu/loopit-dev/docker/docker-compose.dev.yml ]; then
-              echo "docker-compose.dev.yml exists ✅"
-            else
-              echo "docker-compose.dev.yml does NOT exist ❌"
-            fi
-
-            if [ -f /home/ubuntu/loopit-dev/docker/.env.test ]; then
-              echo ".env.test exists ✅"
-            else
-              echo ".env.test does NOT exist ❌"
-            fi
-
-            # 컨테이너 재기동
-            echo "Stopping existing containers..."
-            docker compose -f /home/ubuntu/loopit-dev/docker/docker-compose.dev.yml down || true
-
-            echo "Pulling latest images..."
-            docker compose -f /home/ubuntu/loopit-dev/docker/docker-compose.dev.yml pull
-
-            echo "Starting containers..."
-            docker compose -f /home/ubuntu/loopit-dev/docker/docker-compose.dev.yml up -d
-
-            # 최종 확인
-            echo "Listing running containers..."
-            docker ps -a
-      
+            cd /home/ubuntu/loopit-dev/docker/
+            docker compose -f docker-compose.dev.yml down
+            docker compose -f docker-compose.dev.yml pull
+            docker compose -f docker-compose.dev.yml up -d
