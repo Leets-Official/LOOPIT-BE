@@ -27,14 +27,17 @@ dependencies {
 
 	// AWS S3 & Presigner
 	implementation 'software.amazon.awssdk:s3:2.20.0'
-	implementation 'software.amazon.awssdk:s3-presigner:2.20.0'
+	implementation 'software.amazon.awssdk:s3-presigner:2.25.0'
+	implementation platform('software.amazon.awssdk:bom:2.25.0')
+	implementation 'software.amazon.awssdk:s3'
+	implementation 'software.amazon.awssdk:s3-presigner'
 
 	// JWT (인증 관련)
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-	// DB & Swagger & Utils
+	// DB & Swagger & Util
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
