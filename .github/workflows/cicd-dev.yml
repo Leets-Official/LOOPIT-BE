@@ -85,6 +85,7 @@ jobs:
           source: "./docker/docker-compose.dev.yml"
           target: "/home/ubuntu/loopit-dev/docker/"
 
+      # /home/ubuntu/loopit-dev/docker/ 경로 파일 확인
       - name: Check files on EC2
         uses: appleboy/ssh-action@master
         with:
