@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  app:
+    image: loopit543/loopit-prod:latest
+    container_name: loopit-prod-app
+    env_file:
+      - .env.prod
+    restart: always
+    ports:
+      - "8082:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      TZ: Asia/Seoul
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: loopit-mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: loopit
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Seoul
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
