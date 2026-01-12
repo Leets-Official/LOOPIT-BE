@@ -86,7 +86,7 @@ jobs:
           target: "/home/ubuntu/loopit-dev/docker/"
           strip_components: 1
 
-      # 4. 최종 배포 실행 (방어 로직 포함)
+      # 7. EC2에서 컨테이너 재기동
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
@@ -96,15 +96,26 @@ jobs:
           script: |
             cd /home/ubuntu/loopit-dev/docker/
             
-            # 파일이 제대로 왔는지 로그로 다시 확인
-            ls -al
-            
-            if [ -f "docker-compose.dev.yml" ]; then
-              docker compose -f docker-compose.dev.yml down
-              docker compose -f docker-compose.dev.yml pull
-              docker compose -f docker-compose.dev.yml up -d
-              echo "✅ 배포 성공!"
+            # 1. 환경 변수 파일 확인
+            if [ ! -f ".env.test" ]; then
+              echo "❌ 에러: .env.test 파일이 없습니다."
+              exit 1
+            fi
+
+            # 2. 기존 컨테이너 및 네트워크 강제 정리
+            # --env-file을 지정하여 환경 변수를 읽어오고, 
+            # -v를 추가하여 필요시 볼륨까지 정리하거나 --remove-orphans로 잔적을 제거합니다.
+            docker compose -f docker-compose.dev.yml --env-file .env.test down --remove-orphans
+
+            # 3. 최신 이미지 풀링
+            docker compose -f docker-compose.dev.yml --env-file .env.test pull
+
+            # 4. 컨테이너 실행
+            # 실행 실패 시 스크립트가 멈추도록 설정
+            if docker compose -f docker-compose.dev.yml --env-file .env.test up -d; then
+              echo "✅ 배포가 성공적으로 완료되었습니다!"
+              docker ps
             else
-              echo "❌ 에러: docker-compose.dev.yml 파일을 찾을 수 없습니다."
+              echo "❌ 에러: 컨테이너 실행에 실패했습니다."
               exit 1
             fi
