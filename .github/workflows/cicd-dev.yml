@@ -3,6 +3,7 @@ name: CI/CD - Develop
 on:
   push:
     branches: [ "develop" ]
+  # pr 요청 시 ci 테스트
   pull_request:
     branches: [ "develop" ]
 
