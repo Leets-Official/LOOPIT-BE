@@ -95,7 +95,7 @@ jobs:
           script: |
             cd /home/ubuntu/loopit-dev/docker/
             
-            # 1️⃣ 환경 변수 파일 확인
+            # 1️⃣ 환경 변수 파일 확인.
             if [ ! -f ".env.test" ]; then
               echo "❌ 에러: .env.test 파일이 없습니다."
               exit 1
