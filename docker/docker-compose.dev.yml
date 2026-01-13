@@ -6,7 +6,7 @@ services:
     container_name: loopit-dev-app
     env_file:
       - .env.test
-    restart: always
+    restart: "no"
     ports:
       - "8081:8080"
     environment:
@@ -14,12 +14,20 @@ services:
       SPRING_PROFILES_ACTIVE: dev
       TZ: Asia/Seoul
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
   mysql:
     image: mysql:8.0
     container_name: loopit-mysql
-    restart: always
+    env_file:
+      - .env.test
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: "no"
     ports:
       - "3306:3306"
     environment:
