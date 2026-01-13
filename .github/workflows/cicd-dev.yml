@@ -86,7 +86,6 @@ jobs:
           target: "/home/ubuntu/loopit-dev/docker/"
           strip_components: 1
 
-      # 7. EC2에서 컨테이너 재기동.
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
@@ -96,22 +95,22 @@ jobs:
           script: |
             cd /home/ubuntu/loopit-dev/docker/
             
-            # 1. 환경 변수 파일 확인
+            # 1️⃣ 환경 변수 파일 확인
             if [ ! -f ".env.test" ]; then
               echo "❌ 에러: .env.test 파일이 없습니다."
               exit 1
             fi
+            
+            echo "📄 .env.test 내용 확인 (디버깅용):"
+            cat .env.test
 
-            # 2. 기존 컨테이너 및 네트워크 강제 정리
-            # --env-file을 지정하여 환경 변수를 읽어오고, 
-            # -v를 추가하여 필요시 볼륨까지 정리하거나 --remove-orphans로 잔적을 제거합니다.
-            docker compose -f docker-compose.dev.yml --env-file .env.test down --remove-orphans
+            # 2️⃣ 기존 컨테이너 및 네트워크 정리
+            docker compose -f docker-compose.dev.yml --env-file .env.test down -v --remove-orphans
 
-            # 3. 최신 이미지 풀링
+            # 3️⃣ 최신 이미지 풀링
             docker compose -f docker-compose.dev.yml --env-file .env.test pull
 
-            # 4. 컨테이너 실행
-            # 실행 실패 시 스크립트가 멈추도록 설정
+            # 4️⃣ 컨테이너 실행
             if docker compose -f docker-compose.dev.yml --env-file .env.test up -d; then
               echo "✅ 배포가 성공적으로 완료되었습니다!"
               docker ps
@@ -119,3 +118,19 @@ jobs:
               echo "❌ 에러: 컨테이너 실행에 실패했습니다."
               exit 1
             fi
+
+            # 5️⃣ MySQL 컨테이너 환경변수 확인
+            echo "🔍 MySQL 환경변수 확인:"
+            docker exec loopit-mysql env | grep -E "MYSQL_USER|MYSQL_PASSWORD|MYSQL_DATABASE|MYSQL_ROOT_PASSWORD"
+
+            # 6️⃣ MySQL 접속 테스트 (root)
+            echo "🔍 MySQL root 접속 테스트:"
+            docker exec -i loopit-mysql mysql -uroot -proot -e "SHOW DATABASES;" || echo "⚠️ root DB 접속 실패"
+
+            # 7️⃣ MySQL 접속 테스트 (사용자 계정)
+            echo "🔍 MySQL 사용자 계정 접속 테스트:"
+            # .env.test 내용 SSH 세션에서 export
+            export $(grep -v '^#' .env.test | xargs)
+
+            # 이제 DB_USERNAME / DB_PASSWORD 사용 가능
+            docker exec -i loopit-mysql mysql -u${DB_USERNAME} -p${DB_PASSWORD} -e "SHOW DATABASES;"
