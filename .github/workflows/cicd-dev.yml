@@ -132,6 +132,6 @@ jobs:
             # .env.test 내용 SSH 세션에서 export
             export $(grep -v '^#' .env.test | xargs)
 
-            # 이제 DB_USERNAME / DB_PASSWORD 사용 가능
+            # 이후 DB_USERNAME / DB_PASSWORD 사용 가능
             docker exec -i loopit-mysql mysql -h loopit-mysql -u${DB_USERNAME} -p${DB_PASSWORD} -e "SHOW DATABASES;"
 
