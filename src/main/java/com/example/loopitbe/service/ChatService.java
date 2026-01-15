@@ -1,7 +1,10 @@
 package com.example.loopitbe.service;
 
 import com.example.loopitbe.dto.request.ChatMessageRequest;
+import com.example.loopitbe.dto.request.ChatRoomCreateRequest;
 import com.example.loopitbe.dto.response.ChatMessageResponse;
+import com.example.loopitbe.dto.response.ChatRoomDetailResponse;
+import com.example.loopitbe.dto.response.ChatRoomListResponse;
 import com.example.loopitbe.entity.ChatMessage;
 import com.example.loopitbe.entity.ChatRoom;
 import com.example.loopitbe.entity.User;
@@ -14,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -30,6 +35,7 @@ public class ChatService {
         this.userRepository = userRepository;
     }
 
+    // 메시지 저장
     public ChatMessageResponse saveMessage(ChatMessageRequest request) {
         // 1. 채팅방 및 유저 조회
         ChatRoom room = chatRoomRepository.findById(request.getRoomId())
@@ -51,5 +57,73 @@ public class ChatService {
 
         // 4. 응답 DTO로 변환하여 반환
         return ChatMessageResponse.from(message);
+    }
+
+    // 채팅방 생성 및 조회 메서드
+    @Transactional
+    public ChatRoomDetailResponse createOrGetChatRoom(ChatRoomCreateRequest request) {
+        // 1. 이미 존재하는 채팅방인지 확인
+        // 판매글 기능이 추가되면 post_id까지 조건에 추가해야 함.
+        return chatRoomRepository.findByBuyerUserIdAndSellerUserId(request.getBuyerId(), request.getSellerId())
+                .map(ChatRoomDetailResponse::from)
+                .orElseGet(() -> {
+                    // 2. 존재하지 않으면 새로 생성
+                    User buyer = userRepository.findById(request.getBuyerId())
+                            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                    User seller = userRepository.findById(request.getSellerId())
+                            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+                    ChatRoom newRoom = new ChatRoom(buyer, seller);
+                    ChatRoom savedRoom = chatRoomRepository.save(newRoom);
+                    return ChatRoomDetailResponse.from(savedRoom);
+                });
+    }
+
+    // 모든 채팅방 조회
+    @Transactional(readOnly = true)
+    public List<ChatRoomListResponse> getMyChatRooms(Long userId) {
+        // 사용자가 구매자이거나 판매자인 모든 방 조회
+        List<ChatRoom> rooms = chatRoomRepository.findAllByBuyerUserIdOrSellerUserIdOrderByLastMessageAtDesc(userId, userId);
+
+        List<ChatRoomListResponse> responseList = new ArrayList<>();
+        for (ChatRoom room : rooms) {
+            responseList.add(ChatRoomListResponse.from(room, userId));
+        }
+        return responseList;
+    }
+
+    // 이전 채팅 내역 확인
+    @Transactional(readOnly = true)
+    public List<ChatMessageResponse> getChatMessages(Long roomId) {
+        // 1. 채팅방 존재 여부 확인
+        if (!chatRoomRepository.existsById(roomId)) {
+            throw new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND);
+        }
+
+        // 2. 메시지 내역 조회
+        List<ChatMessage> messages = chatMessageRepository.findAllByChatRoomIdOrderByCreatedAtAsc(roomId);
+
+        // 3. DTO 변환
+        List<ChatMessageResponse> responseList = new ArrayList<>();
+        for (ChatMessage message : messages) {
+            responseList.add(ChatMessageResponse.from(message));
+        }
+
+        return responseList;
+    }
+
+    // 읽음 표시
+    @Transactional
+    public void markMessagesAsRead(Long roomId, Long userId) {
+        // 해당 방에서 상대방이 보낸 안 읽은 메시지들을 모두 가져옴
+        List<ChatMessage> unreadMessages = chatMessageRepository
+                .findAllByChatRoomIdAndSenderUserIdNotAndIsReadFalse(roomId, userId);
+
+        // 읽음 처리
+        if (!unreadMessages.isEmpty()) {
+            for (ChatMessage message : unreadMessages) {
+                message.markAsRead();
+            }
+        }
     }
 }

@@ -1,6 +1,8 @@
 package com.example.loopitbe.config;
 
+import com.example.loopitbe.config.handler.StompHandler;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -9,6 +11,12 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker // STOMP annotation
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    private final StompHandler stompHandler;
+
+    public WebSocketConfig(StompHandler stompHandler) {
+        this.stompHandler = stompHandler;
+    }
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // 1. 소켓 연결 엔드포인트 설정
@@ -26,5 +34,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // 3. 메시지 발행 요청
         // 클라이언트가 메시지를 보낼 때 사용 (클라이언트 -> 서버)
         registry.setApplicationDestinationPrefixes("/pub");
+    }
+
+    // 클라이언트로부터 들어오는 메시지 채널을 가로챔.
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(stompHandler);
     }
 }

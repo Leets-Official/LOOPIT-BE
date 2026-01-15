@@ -30,8 +30,8 @@ public class ChatMessage {
     @Column(columnDefinition = "TEXT")
     private String content; // TEXT 타입일 때만 내용 존재
 
-    @Column(name = "is_read")
-    private boolean isRead; // 읽음 여부 (default: false)
+    @Column(name = "is_read", nullable = false)
+    private boolean isRead = false; // 읽음 여부 (default: false)
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -48,7 +48,8 @@ public class ChatMessage {
         this.isRead = false;
     }
 
-    public void read() {
+    // 메시지 읽음 처리 메서드
+    public void markAsRead() {
         this.isRead = true;
     }
 
