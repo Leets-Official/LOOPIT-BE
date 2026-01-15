@@ -33,6 +33,9 @@ dependencies {
 
 	//web socket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	// AWS SDK v2 S3
+	implementation platform('software.amazon.awssdk:bom:2.21.1')
+	implementation 'software.amazon.awssdk:s3'
 
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	testImplementation("org.springframework.security:spring-security-test")
