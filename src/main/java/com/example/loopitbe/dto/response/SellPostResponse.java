@@ -2,7 +2,7 @@ package com.example.loopitbe.dto;
 
 import java.time.LocalDateTime;
 
-public record SellPostResponseDto(
+public record SellPostResponse(
         Long id,
         String title,
         String status,

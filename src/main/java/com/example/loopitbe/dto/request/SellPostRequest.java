@@ -2,7 +2,7 @@ package com.example.loopitbe.dto;
 
 import java.util.List;
 
-public record SellPostRequestDto(
+public record SellPostRequest(
         String title,
         String manufacturer,
         String modelName,

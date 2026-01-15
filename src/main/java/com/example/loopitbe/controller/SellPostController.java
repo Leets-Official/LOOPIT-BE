@@ -1,13 +1,11 @@
 package com.example.loopitbe.controller;
 
-import com.example.loopitbe.dto.SellPostRequestDto;
-import com.example.loopitbe.dto.SellPostResponseDto;
+import com.example.loopitbe.common.ApiResponse;
+import com.example.loopitbe.dto.SellPostRequest;
+import com.example.loopitbe.dto.SellPostResponse;
 import com.example.loopitbe.entity.SellPost;
-import com.example.loopitbe.entity.User;
-import com.example.loopitbe.repository.SellPostRepository;
-import com.example.loopitbe.repository.UserRepository;
 import com.example.loopitbe.service.S3Service;
-import lombok.RequiredArgsConstructor;
+import com.example.loopitbe.service.SellPostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,50 +13,37 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/sell-posts")
-@RequiredArgsConstructor
+@RequestMapping("/sell-posts")
 public class SellPostController {
 
     private final S3Service s3Service;
-    private final SellPostRepository sellPostRepository;
-    private final UserRepository userRepository;
+    private final SellPostService sellPostService;
+
+    public SellPostController(S3Service s3Service, SellPostService sellPostService) {
+        this.s3Service = s3Service;
+        this.sellPostService = sellPostService;
+    }
 
     @GetMapping("/presigned-url")
-    public ResponseEntity<String> getPresignedUrl(@RequestParam String fileName) {
-        return ResponseEntity.ok(s3Service.getPresignedUrl(fileName));
+    public ResponseEntity<ApiResponse<String>> getPresignedUrl(@RequestParam String fileName) {
+        String url = s3Service.getPresignedUrl("products", fileName);
+        return ResponseEntity.ok(ApiResponse.ok(url, "Presigned URL이 생성되었습니다."));
     }
 
     @PostMapping
-    public ResponseEntity<SellPostResponseDto> createSellPost(
-            @RequestBody SellPostRequestDto requestDto,
+    public ResponseEntity<ApiResponse<SellPostResponse>> createSellPost(
+            @RequestBody SellPostRequest requestDto,
             Principal principal) {
 
-        String kakaoId = principal.getName();
-        User user = userRepository.findByKakaoId(kakaoId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        SellPost savedPost = sellPostService.createPost(principal.getName(), requestDto);
 
-        SellPost sellPost = SellPost.builder()
-                .user(user)
-                .title(requestDto.title())
-                .content(requestDto.description())
-                .price(requestDto.price())
-                .model(requestDto.modelName())
-                .manufacturer(requestDto.manufacturer())
-                .color(requestDto.color())
-                .capacity(requestDto.capacity())
-                .components(requestDto.components())
-                .imageUrls(requestDto.imageUrls())
-                .build();
-
-        SellPost savedPost = sellPostRepository.save(sellPost);
-
-        SellPostResponseDto response = new SellPostResponseDto(
+        SellPostResponse responseData = new SellPostResponse(
                 savedPost.getId(),
                 savedPost.getTitle(),
                 "판매글이 성공적으로 등록되었습니다.",
                 LocalDateTime.now()
         );
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.ok(responseData, "판매글 등록 완료"));
     }
 }

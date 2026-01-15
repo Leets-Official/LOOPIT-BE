@@ -52,7 +52,8 @@ public class SecurityConfig {
                                 "/kakao-callback.html", // 로컬 테스트용
                                 "/auth/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/sell-posts/presigned-url" //테스트 허용(ㅈ
                         ).permitAll()
 
                         // OPTIONS 요청 허용
@@ -67,6 +68,7 @@ public class SecurityConfig {
                         new JwtAuthenticationFilter(jwtProvider),
                         UsernamePasswordAuthenticationFilter.class
                 );
+
 
         return http.build();
     }

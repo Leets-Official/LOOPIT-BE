@@ -1,6 +1,5 @@
 package com.example.loopitbe.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -11,15 +10,28 @@ import java.time.Duration;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class S3Service {
     private final S3Presigner s3Presigner;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String getPresignedUrl(String fileName) {
-        String key = "products/" + UUID.randomUUID() + "_" + fileName;
+    public S3Service(S3Presigner s3Presigner) {
+        this.s3Presigner = s3Presigner;
+    }
+
+    /**
+     * S3 Presigned URL 생성
+     * @param prefix 저장할 폴더 경로 (
+     * @param fileName 원본 파일명
+     * @return 생성된 Presigned URL 문자열
+     */
+    public String getPresignedUrl(String prefix, String fileName) {
+        if (!prefix.endsWith("/")) {
+            prefix += "/";
+        }
+
+        String key = prefix + UUID.randomUUID() + "_" + fileName;
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
