@@ -118,20 +118,3 @@ jobs:
               echo "❌ 에러: 컨테이너 실행에 실패했습니다."
               exit 1
             fi
-
-            # 5️⃣ MySQL 컨테이너 환경변수 확인
-            echo "🔍 MySQL 환경변수 확인:"
-            docker exec loopit-mysql env | grep -E "MYSQL_USER|MYSQL_PASSWORD|MYSQL_DATABASE|MYSQL_ROOT_PASSWORD"
-
-            # 6️⃣ MySQL 접속 테스트 (root)
-            echo "🔍 MySQL root 접속 테스트:"
-            docker exec -i loopit-mysql mysql -uroot -proot -e "SHOW DATABASES;" || echo "⚠️ root DB 접속 실패"
-
-            # 7️⃣ MySQL 접속 테스트 (사용자 계정)
-            echo "🔍 MySQL 사용자 계정 접속 테스트:"
-            # .env.test 내용 SSH 세션에서 export
-            export $(grep -v '^#' .env.test | xargs)
-
-            # 이후 DB_USERNAME / DB_PASSWORD 사용 가능
-            docker exec -i loopit-mysql mysql -h loopit-mysql -u${DB_USERNAME} -p${DB_PASSWORD} -e "SHOW DATABASES;"
-
