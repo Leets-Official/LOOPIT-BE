@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
+
 
 import java.time.Duration;
 import java.util.UUID;
@@ -21,8 +23,8 @@ public class S3Service {
     }
 
     /**
-     * S3 Presigned URL 생성
-     * @param prefix 저장할 폴더 경로 (
+     * Presigned URL 생성
+     * @param prefix 저장할 폴더 경로 (예: "chats", "products")
      * @param fileName 원본 파일명
      * @return 생성된 Presigned URL 문자열
      */
@@ -31,16 +33,24 @@ public class S3Service {
             prefix += "/";
         }
 
-        String key = prefix + UUID.randomUUID() + "_" + fileName;
+        // 1. 저장될 파일 경로 생성
+        String fileNameWithUuid = UUID.randomUUID() + "_" + fileName;
+        String key = prefix + fileNameWithUuid;
 
+        // 2. PutObjectRequest 생성 (업로드할 파일 정보)
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
                 .build();
 
-        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(r -> r
-                .signatureDuration(Duration.ofMinutes(10))
-                .putObjectRequest(objectRequest));
+        // 3. Presign 요청 생성 (유효기간 설정)
+        PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(10)) // 10분간 유효
+                .putObjectRequest(objectRequest)
+                .build();
+
+        // 4. URL 발급
+        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
 
         return presignedRequest.url().toString();
     }
