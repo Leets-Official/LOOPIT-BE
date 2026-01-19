@@ -52,7 +52,8 @@ public class SecurityConfig {
                                 "/ws-chat/**",
                                 "/auth/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/test/**"
                         ).permitAll()
 
                         // OPTIONS 요청 허용
