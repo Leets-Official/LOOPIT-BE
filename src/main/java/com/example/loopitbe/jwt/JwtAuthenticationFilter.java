@@ -22,17 +22,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.jwtProvider = jwtProvider;
     }
 
-
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        System.out.println("JwtFilter 진입: " + request.getRequestURI());
-
-        String uri = request.getRequestURI();
-
         String accessToken = resolveToken(request);
 
         try {

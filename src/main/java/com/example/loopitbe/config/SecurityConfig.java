@@ -25,11 +25,6 @@ public class SecurityConfig {
         this.jwtProvider = jwtProvider;
     }
 
-    @PostConstruct
-    public void init() {
-        System.out.println("CUSTOM SecurityConfig LOADED");
-    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
