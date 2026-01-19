@@ -1,6 +1,7 @@
 package com.example.loopitbe.config;
 
 import com.example.loopitbe.redis.RedisSubscriber;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -15,15 +16,18 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfig {
 
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
+    public RedisConnectionFactory redisConnectionFactory(
+            @Value("${spring.data.redis.host}") String host,
+            @Value("${spring.data.redis.port}") int port
+    ) {
+        return new LettuceConnectionFactory(host, port);
     }
 
     // Cache 저장
     @Bean
-    public RedisTemplate<String, String> redisTemplate() {
+    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, String> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory());
+        template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new StringRedisSerializer());
         return template;
