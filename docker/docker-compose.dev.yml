@@ -47,5 +47,11 @@ services:
       - "--max-connections=50"
       - "--table-open-cache=200"
 
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+
 volumes:
   mysql-data:
