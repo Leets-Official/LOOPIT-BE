@@ -2,6 +2,7 @@ package com.example.loopitbe.config;
 
 import com.example.loopitbe.jwt.JwtAuthenticationFilter;
 import com.example.loopitbe.jwt.JwtProvider;
+import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,6 +23,11 @@ public class SecurityConfig {
 
     public SecurityConfig(JwtProvider jwtProvider) {
         this.jwtProvider = jwtProvider;
+    }
+
+    @PostConstruct
+    public void init() {
+        System.out.println("CUSTOM SecurityConfig LOADED");
     }
 
     @Bean
