@@ -22,6 +22,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.jwtProvider = jwtProvider;
     }
 
+    // 핕터 자체 스킵
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        return uri.startsWith("/test")
+                || uri.startsWith("/auth")
+                || uri.startsWith("/swagger-ui")
+                || uri.startsWith("/v3/api-docs");
+    }
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,

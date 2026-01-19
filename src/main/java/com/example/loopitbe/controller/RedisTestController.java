@@ -43,10 +43,8 @@ public class RedisTestController {
         redisPublisher.publish("test:channel", "hello pubsub");
         return "published";
     }
-
     @GetMapping("/ping")
     public String ping() {
         return "pong";
     }
 }
-
