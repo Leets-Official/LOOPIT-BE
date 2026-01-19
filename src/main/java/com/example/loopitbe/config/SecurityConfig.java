@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // auth 관련 API는 허용
                         .requestMatchers(
-                                "/kakao-callback.html", // 로컬 테스트용
+                                "/ws-chat/**",
                                 "/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
