@@ -28,6 +28,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        String uri = request.getRequestURI();
+
+        // test에 대한 요청은 통과
+        if (uri.startsWith("/test") ) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String accessToken = resolveToken(request);
 
