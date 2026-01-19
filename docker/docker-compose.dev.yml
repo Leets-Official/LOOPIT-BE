@@ -12,6 +12,8 @@ services:
     environment:
       # application.yml 적용 후 application-dev.yml 적용.
       SPRING_PROFILES_ACTIVE: dev
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
       TZ: Asia/Seoul
     depends_on:
       mysql:
