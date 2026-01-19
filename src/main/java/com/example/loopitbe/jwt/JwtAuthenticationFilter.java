@@ -22,15 +22,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.jwtProvider = jwtProvider;
     }
 
-    // 핕터 자체 스킵
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        return uri.startsWith("/test")
-                || uri.startsWith("/auth")
-                || uri.startsWith("/swagger-ui")
-                || uri.startsWith("/v3/api-docs");
-    }
 
     @Override
     protected void doFilterInternal(
@@ -41,12 +32,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         System.out.println("JwtFilter 진입: " + request.getRequestURI());
 
         String uri = request.getRequestURI();
-
-        // test에 대한 요청은 통과
-        if (uri.startsWith("/test") ) {
-            filterChain.doFilter(request, response);
-            return;
-        }
 
         String accessToken = resolveToken(request);
 
