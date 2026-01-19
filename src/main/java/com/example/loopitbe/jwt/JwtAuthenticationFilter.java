@@ -28,6 +28,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        System.out.println("JwtFilter 진입: " + request.getRequestURI());
+
         String uri = request.getRequestURI();
 
         // test에 대한 요청은 통과
