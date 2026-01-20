@@ -6,9 +6,9 @@ public class PresignedUrlResponse {
 
     public PresignedUrlResponse() {}
 
-    public PresignedUrlResponse(String presignedUrl, String fileUrl) {
+    public PresignedUrlResponse(String presignedUrl) {
         this.presignedUrl = presignedUrl;
-        this.fileUrl = fileUrl;
+        this.fileUrl = presignedUrl.split("\\?")[0];;
     }
 
     public String getPresignedUrl() { return presignedUrl; }

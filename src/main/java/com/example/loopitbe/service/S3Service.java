@@ -1,5 +1,7 @@
 package com.example.loopitbe.service;
 
+import com.example.loopitbe.dto.response.PresignedUrlResponse;
+import com.example.loopitbe.enums.ImageDomain;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -21,13 +23,21 @@ public class S3Service {
         this.s3Presigner = s3Presigner;
     }
 
+    public PresignedUrlResponse generatePresignedUrl(
+            ImageDomain domain,
+            String fileName
+    ) {
+        String presignedUrl = getPresignedUrl(domain.getPrefix(), fileName);
+        return new PresignedUrlResponse(presignedUrl);
+    }
+
     /**
      * Presigned URL 생성
      * @param prefix 저장할 폴더 경로 (예: "chats", "products")
      * @param fileName 원본 파일명
      * @return 생성된 Presigned URL 문자열
      */
-    public String getPresignedUrl(String prefix, String fileName) {
+    private String getPresignedUrl(String prefix, String fileName) {
         if (!prefix.endsWith("/")) {
             prefix += "/";
         }
