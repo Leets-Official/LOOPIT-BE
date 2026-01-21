@@ -3,9 +3,12 @@ package com.example.loopitbe.service;
 import com.example.loopitbe.exception.CustomException;
 import com.example.loopitbe.exception.ErrorCode;
 import com.example.loopitbe.exception.RateLimitException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -15,11 +18,11 @@ public class ChatBotService {
     private final WebClient webClient;
     private final StringRedisTemplate redisTemplate;
     private static final String HISTORY_KEY = "user:history:";
-    private final String API_KEY = "AIzaSyCOE0ulson7G36-cbgl_RLWnT2qCVPXdIo";
+    @Value("${GEMINI_API_KEY}")
+    private String API_KEY;
 
     public ChatBotService(WebClient.Builder webClientBuilder, StringRedisTemplate redisTemplate) {
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
-        this.webClient = webClientBuilder.baseUrl(url).build();
+        this.webClient = webClientBuilder.baseUrl("https://generativelanguage.googleapis.com").build();
         this.redisTemplate = redisTemplate;
     }
 
@@ -92,14 +95,23 @@ public class ChatBotService {
 
         try {
             return webClient.post()
-                    .uri(uriBuilder -> uriBuilder.queryParam("key", API_KEY).build())
+                    // 1. 모델 경로 명시 (현재 2.0-flash가 최신이라면 경로 수정)
+                    .uri("/v1beta/models/gemini-2.5-flash:generateContent")
+                    // 2. 헤더에 API KEY 설정 (curl의 -H 옵션과 동일)
+                    .header("Content-Type", "application/json")
+                    .header("X-goog-api-key", API_KEY)
                     .bodyValue(body)
                     .retrieve()
                     .bodyToMono(Map.class)
                     .map(this::extractTextFromResponse)
                     .block();
+        } catch (WebClientResponseException e) {
+            // 디버깅을 위해 상세 에러 로그 출력
+            System.err.println("에러 상태 코드: " + e.getStatusCode());
+            System.err.println("에러 메시지: " + e.getResponseBodyAsString());
+            throw new CustomException(ErrorCode.GEMINI_REQUEST_ERROR);
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.GEMINI_REQUEST_ERROR); // 커스텀 예외 처리
+            throw new CustomException(ErrorCode.GEMINI_REQUEST_ERROR);
         }
     }
 
@@ -136,7 +148,7 @@ public class ChatBotService {
             List parts = (List) content.get("parts");
             return (String) ((Map) parts.get(0)).get("text");
         } catch (Exception e) {
-            return "응답 해석 오류";
+            throw new CustomException();
         }
     }
 }
