@@ -1,5 +1,6 @@
 package com.example.loopitbe.service;
 
+import com.example.loopitbe.dto.response.ChatBotHistoryResponse;
 import com.example.loopitbe.exception.CustomException;
 import com.example.loopitbe.exception.ErrorCode;
 import com.example.loopitbe.exception.RateLimitException;
@@ -27,7 +28,7 @@ public class ChatBotService {
     }
 
     // 질문 개수 초과 확인
-    public void checkAvailability(String userId) {
+    public void checkAvailability(Long userId) {
         String key = HISTORY_KEY + userId;
 
         Long currentSize = redisTemplate.opsForList().size(key);
@@ -38,7 +39,7 @@ public class ChatBotService {
         }
     }
 
-    public String getRepairEstimate(String userId, String userMessage) {
+    public String getRepairEstimate(Long userId, String userMessage) {
         // Redis에서 이전 대화 내역 가져오기
         List<String> history = getChatHistory(userId);
 
@@ -116,7 +117,7 @@ public class ChatBotService {
     }
 
     // 대화 내역 저장
-    public void saveChatMessage(String userId, String role, String message) {
+    public void saveChatMessage(Long userId, String role, String message) {
         String key = HISTORY_KEY + userId;
         String data = role + ": " + message;
 
@@ -128,7 +129,6 @@ public class ChatBotService {
         // 최근 10개의 메시지만 유지
         redisTemplate.opsForList().trim(key, -10, -1);
 
-
         if (currentTTL < 0) {
             redisTemplate.expire(key, 24, TimeUnit.HOURS);
         } else {
@@ -137,7 +137,7 @@ public class ChatBotService {
     }
 
     // 대화 내역 조회
-    public List<String> getChatHistory(String userId) {
+    public List<String> getChatHistory(Long userId) {
         return redisTemplate.opsForList().range(HISTORY_KEY + userId, 0, -1);
     }
 
@@ -150,5 +150,21 @@ public class ChatBotService {
         } catch (Exception e) {
             throw new CustomException(ErrorCode.GEMINI_INVALID_RESPONSE);
         }
+    }
+
+    public List<ChatBotHistoryResponse> getChatHistoryParsed(Long userId) {
+        List<String> rawHistory = getChatHistory(userId);
+
+        if (rawHistory == null || rawHistory.isEmpty()) {
+            return List.of();
+        }
+
+        // DTO 리스트로 변환
+        return rawHistory.stream()
+                .map(data -> {
+                    String[] parts = data.split(": ", 2);
+                    return new ChatBotHistoryResponse(parts[0], parts[1]);
+                })
+                .toList();
     }
 }
