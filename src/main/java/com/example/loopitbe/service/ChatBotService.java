@@ -74,7 +74,7 @@ public class ChatBotService {
 
         String geminiReply = callGeminiApi(sb.toString());
 
-        // 4. 대화 결과가 정상적일 때만 Redis에 대화 쌍 저장
+        // 대화 결과가 정상적일 때만 Redis에 대화 저장(사용자 질문 & 제미나이 답변)
         if (!geminiReply.startsWith("API 호출 중") && !geminiReply.equals("응답 해석 오류")) {
             saveChatMessage(userId, "User", userMessage);
             saveChatMessage(userId, "Bot", geminiReply);
@@ -148,7 +148,7 @@ public class ChatBotService {
             List parts = (List) content.get("parts");
             return (String) ((Map) parts.get(0)).get("text");
         } catch (Exception e) {
-            throw new CustomException();
+            throw new CustomException(ErrorCode.GEMINI_INVALID_RESPONSE);
         }
     }
 }
