@@ -18,6 +18,12 @@ public class GlobalExceptionHandler {
                 .status(errorCode.getStatus())
                 .body(ApiResponse.fail(errorCode.getStatus().value(), errorCode.getMessage()));
     }
+    // RateLimitException 처리(챗봇 질문 갯수 초과)
+    @ExceptionHandler(RateLimitException.class)
+    public ResponseEntity<String> handleRateLimit(RateLimitException e) {
+        // 429 Too Many Requests 상태코드와 함께 메시지 반환
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(e.getMessage());
+    }
 
     // Validation 검증 에러
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -54,7 +54,8 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/test/**"
+                                "/test/**",
+                                "/chatbot/**"
                         ).permitAll()
 
                         // OPTIONS 요청 허용
