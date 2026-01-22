@@ -43,6 +43,10 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.ok(service.getUser(userId), "사용자 정보 조회 성공."));
     }
 
+    @Operation(
+            summary = "사용자 정보 업데이트",
+            description = "nickname, name, email, birthdate 필드 업데이트. 모든 필드는 null 또는 blank불가."
+    )
     @PutMapping("/{userId}")
     public ResponseEntity<ApiResponse<KakaoUserResponse>> updateUser(
             @PathVariable Long userId,
