@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     DUPLICATED_KAKAO_ID(HttpStatus.CONFLICT, "중복된 카카오 아이디입니다."),
     DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "중복된 닉네임 입니다."),
+    DUPLICATED_EMAIL(HttpStatus.CONFLICT, "중복된 이메일 입니다."),
     KAKAO_AUTHENTICATED_FAILED(HttpStatus.BAD_REQUEST, "카카오 인증에 실패하였습니다."),
     JSON_PARSE_ERROR(HttpStatus.BAD_REQUEST, "OAuth 인증 중 Json 파싱에 실패하였습니다."),
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 액세스 토큰입니다."),

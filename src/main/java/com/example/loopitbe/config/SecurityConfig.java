@@ -54,7 +54,9 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/test/**"
+                                "/test/**",
+                                "/user/register/kakao",
+                                "user/**"
                         ).permitAll()
 
                         // OPTIONS 요청 허용
