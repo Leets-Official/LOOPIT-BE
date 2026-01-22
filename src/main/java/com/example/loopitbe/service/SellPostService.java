@@ -1,12 +1,15 @@
 package com.example.loopitbe.service;
 
-import com.example.loopitbe.dto.SellPostRequest;
+import com.example.loopitbe.dto.response.SellPostResponse;
+import com.example.loopitbe.dto.request.SellPostRequest;
 import com.example.loopitbe.entity.SellPost;
 import com.example.loopitbe.entity.User;
 import com.example.loopitbe.repository.SellPostRepository;
 import com.example.loopitbe.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.loopitbe.exception.CustomException;
+import com.example.loopitbe.exception.ErrorCode;
 
 @Service
 public class SellPostService {
@@ -20,13 +23,13 @@ public class SellPostService {
     }
 
     @Transactional
-    public SellPost createPost(String kakaoId, SellPostRequest requestDto) {
-
+    public SellPostResponse createPost(String kakaoId, SellPostRequest requestDto) {
         User user = userRepository.findByKakaoId(kakaoId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         SellPost sellPost = SellPost.createPost(user, requestDto);
+        SellPost savedPost = sellPostRepository.save(sellPost);
 
-        return sellPostRepository.save(sellPost);
+        return SellPostResponse.from(savedPost);
     }
 }

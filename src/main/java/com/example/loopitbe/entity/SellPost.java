@@ -1,12 +1,16 @@
 package com.example.loopitbe.entity;
 
-import com.example.loopitbe.dto.SellPostRequest; // DTO 임포트
+import com.example.loopitbe.dto.request.SellPostRequest;
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "sell_posts")
+@EntityListeners(AuditingEntityListener.class)
 public class SellPost {
 
     @Id
@@ -37,6 +41,10 @@ public class SellPost {
     @CollectionTable(name = "post_images", joinColumns = @JoinColumn(name = "post_id"))
     private List<String> imageUrls = new ArrayList<>();
 
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
     // 1. 기본 생성자는 외부 접근 차단 (protected)
     protected SellPost() {}
 
@@ -60,7 +68,7 @@ public class SellPost {
         return new SellPost(
                 user,
                 dto.title(),
-                dto.description(), // DTO 필드명에 맞춰 매핑
+                dto.description(),
                 dto.price(),
                 dto.modelName(),
                 dto.manufacturer(),
@@ -74,6 +82,7 @@ public class SellPost {
     public Long getId() { return id; }
     public User getUser() { return user; }
     public String getTitle() { return title; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
     public String getContent() { return content; }
     public Long getPrice() { return price; }
     public String getModel() { return model; }
