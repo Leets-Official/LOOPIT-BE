@@ -12,6 +12,8 @@ services:
     environment:
       # application.yml 적용 후 application-dev.yml 적용.
       SPRING_PROFILES_ACTIVE: dev
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
       TZ: Asia/Seoul
     depends_on:
       mysql:
@@ -44,6 +46,12 @@ services:
       - "--innodb-buffer-pool-size=64M"
       - "--max-connections=50"
       - "--table-open-cache=200"
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
 
 volumes:
   mysql-data:

@@ -3,6 +3,8 @@ package com.example.loopitbe.entity;
 import com.example.loopitbe.dto.request.KakaoUserCreateRequest;
 import com.example.loopitbe.enums.LoginProvider;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,6 +17,15 @@ public class User {
 
     @Column(length = 20, unique = true)
     private String nickname;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private LocalDate birthdate;
+
+    @Column(name = "profile_image")
+    private String profileImage;
 
     @Column(name = "login_method", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -38,6 +49,9 @@ public class User {
         user.loginMethod = LoginProvider.KAKAO;
         user.kakaoId = dto.getKakaoId();
         user.nickname = dto.getNickname();
+        user.name = dto.getName();
+        user.birthdate = dto.getBirthdate();
+        user.profileImage = dto.getProfileImage();
         user.createdAt = LocalDateTime.now();
         return user;
     }
@@ -64,5 +78,17 @@ public class User {
 
     public Long getUserId() {
         return userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public LocalDate getBirthdate() {
+        return birthdate;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
     }
 }

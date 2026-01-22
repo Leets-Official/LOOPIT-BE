@@ -22,7 +22,15 @@ jobs:
       - name: application.yml 파일 설정
         run: |
           mkdir -p src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+          cat << 'EOF' > ./src/main/resources/application.yml
+          ${{ secrets.APPLICATION_YML }}
+          EOF
+
+      - name: application-dev.yml 생성
+        run: |
+          cat << 'EOF' > src/main/resources/application-dev.yml
+          ${{ secrets.APPLICATION_DEV_YML }}
+          EOF
 
       - name: Build with Gradle
         run: |

@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 public class KakaoUserResponse {
     private String nickname;
     private String kakaoId;
+    private String name;
+    private String profileImage;
     private LocalDateTime createdAt;
 
     public static KakaoUserResponse toDTO(User user){
@@ -14,6 +16,8 @@ public class KakaoUserResponse {
 
         dto.nickname = user.getNickname();
         dto.kakaoId = user.getKakaoId();
+        dto.name = user.getName();
+        dto.profileImage = user.getProfileImage();
         dto.createdAt = user.getCreatedAt();
 
         return dto;
@@ -29,5 +33,13 @@ public class KakaoUserResponse {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
     }
 }
