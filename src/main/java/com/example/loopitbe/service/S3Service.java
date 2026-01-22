@@ -23,42 +23,36 @@ public class S3Service {
         this.s3Presigner = s3Presigner;
     }
 
-    public PresignedUrlResponse generatePresignedUrl(
-            ImageDomain domain,
-            String fileName
-    ) {
+    public PresignedUrlResponse generatePresignedUrl(ImageDomain domain, String fileName) {
         String presignedUrl = getPresignedUrl(domain.getPrefix(), fileName);
         return new PresignedUrlResponse(presignedUrl);
     }
 
-    /**
-     * Presigned URL 생성
-     * @param prefix 저장할 폴더 경로 (예: "chats", "products")
-     * @param fileName 원본 파일명
-     * @return 생성된 Presigned URL 문자열
-     */
-    private String getPresignedUrl(String prefix, String fileName) {
-        if (!prefix.endsWith("/")) {
+    public String getPresignedUrl(String prefix, String fileName) {
+        // 리뷰 반영: prefix 끝에 슬래시(/)가 없으면 자동으로 추가
+        if (prefix != null && !prefix.endsWith("/")) {
             prefix += "/";
+        } else if (prefix == null) {
+            prefix = "";
         }
 
-        // 1. 저장될 파일 경로 생성
+        // 1. 저장될 파일 경로 생성 (UUID + 원본파일명)
         String fileNameWithUuid = UUID.randomUUID() + "_" + fileName;
         String key = prefix + fileNameWithUuid;
 
-        // 2. PutObjectRequest 생성 (업로드할 파일 정보)
+        // 2. S3 업로드 요청 객체 생성
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
                 .build();
 
-        // 3. Presign 요청 생성 (유효기간 설정)
+        // 3. Presigned URL 요청 설정 (유효기간 10분)
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofMinutes(10)) // 10분간 유효
+                .signatureDuration(Duration.ofMinutes(10))
                 .putObjectRequest(objectRequest)
                 .build();
 
-        // 4. URL 발급
+        // 4. 최종 URL 발급 및 반환
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
 
         return presignedRequest.url().toString();
