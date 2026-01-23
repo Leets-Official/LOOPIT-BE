@@ -25,19 +25,6 @@ public class AuthController {
     }
 
     @Operation(
-            summary = "신규 회원 생성",
-            description = "회원가입 성공 시 회원 정보 return"
-    )
-    @PostMapping("/register/kakao")
-    public ResponseEntity<ApiResponse<KakaoUserResponse>> createKakaoUser(@Valid @RequestBody KakaoUserCreateRequest dto){
-        KakaoUserResponse response = service.createKakaoUser(dto);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(ApiResponse.ok(response, "카카오 유저 회원가입 성공."));
-    }
-
-    @Operation(
             summary = "카카오 로그인",
             description = "카카오 로그인 성공 시 JWT 인증처리, registered 필드로 서비스 가입 여부 return"
     )

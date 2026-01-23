@@ -10,6 +10,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @Configuration
 public class S3Config {
+
     @Value("${AWS_ACCESS_KEY}")
     private String accessKey;
 
