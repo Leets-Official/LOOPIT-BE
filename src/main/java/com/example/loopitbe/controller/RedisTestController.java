@@ -2,6 +2,7 @@ package com.example.loopitbe.controller;
 
 import com.example.loopitbe.redis.RedisPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,7 +41,9 @@ public class RedisTestController {
     @GetMapping("/publish")
     public String publish() {
         System.out.println(">>> /test/publish 호출됨");
-        redisPublisher.publish("test:channel", "hello pubsub");
+
+        redisPublisher.publish(new ChannelTopic("test:channel"), "hello pubsub");
+
         return "published";
     }
     @GetMapping("/ping")
