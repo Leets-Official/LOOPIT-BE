@@ -67,10 +67,6 @@ public class ChatBotService {
                 sb.append(msg).append("\n");
             }
         }
-        // 이전 질문 없으면 첫 질문에 대해 TTL 24시간 설정(첫 질문 기준으로 24시간 안에 5개 질문만 가능)
-        else{
-            saveChatMessage(userId, "User",  userMessage);
-        }
         sb.append("사용자 신규 질문: ").append(userMessage);
 
         String geminiReply = callGeminiApi(sb.toString());
