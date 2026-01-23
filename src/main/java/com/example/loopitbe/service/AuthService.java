@@ -37,18 +37,6 @@ public class AuthService {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
-    public KakaoUserResponse createKakaoUser(KakaoUserCreateRequest dto) {
-        if (userRepository.existsUserByKakaoId(dto.getKakaoId()))
-                throw new CustomException(ErrorCode.DUPLICATED_KAKAO_ID);
-
-        if (userRepository.existsUserByNickname(dto.getNickname()))
-            throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
-
-        User newUser = User.createKakaoUser(dto);
-
-        return KakaoUserResponse.toDTO(userRepository.save(newUser));
-    }
-
     public KakaoLoginResponse loginWithKakao(
             String accessCode,
             HttpServletResponse response

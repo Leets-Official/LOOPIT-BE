@@ -1,6 +1,7 @@
 package com.example.loopitbe.entity;
 
 import com.example.loopitbe.dto.request.KakaoUserCreateRequest;
+import com.example.loopitbe.dto.request.UserUpdateRequest;
 import com.example.loopitbe.enums.LoginProvider;
 import jakarta.persistence.*;
 
@@ -20,6 +21,9 @@ public class User {
 
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @Column(nullable = false)
     private LocalDate birthdate;
@@ -50,10 +54,18 @@ public class User {
         user.kakaoId = dto.getKakaoId();
         user.nickname = dto.getNickname();
         user.name = dto.getName();
+        user.email = dto.getEmail();
         user.birthdate = dto.getBirthdate();
         user.profileImage = dto.getProfileImage();
         user.createdAt = LocalDateTime.now();
         return user;
+    }
+
+    public void updateUser(UserUpdateRequest dto) {
+        this.nickname = dto.getNickname();
+        this.name = dto.getName();
+        this.email = dto.getEmail();
+        this.birthdate = dto.getBirthdate();
     }
 
     public LocalDateTime getCreatedAt() {
@@ -64,9 +76,9 @@ public class User {
         return updatedAt;
     }
 
-    public String getKakaoId() {
-        return kakaoId;
-    }
+    public String getKakaoId() { return kakaoId; }
+
+    public String getEmail() { return email; }
 
     public LoginProvider getLoginMethod() {
         return loginMethod;

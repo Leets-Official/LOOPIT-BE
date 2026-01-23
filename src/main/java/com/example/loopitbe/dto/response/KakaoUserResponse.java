@@ -8,6 +8,7 @@ public class KakaoUserResponse {
     private String nickname;
     private String kakaoId;
     private String name;
+    private String email;
     private String profileImage;
     private LocalDateTime createdAt;
 
@@ -17,6 +18,7 @@ public class KakaoUserResponse {
         dto.nickname = user.getNickname();
         dto.kakaoId = user.getKakaoId();
         dto.name = user.getName();
+        dto.email = user.getEmail();
         dto.profileImage = user.getProfileImage();
         dto.createdAt = user.getCreatedAt();
 
@@ -29,6 +31,10 @@ public class KakaoUserResponse {
 
     public String getKakaoId() {
         return kakaoId;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public LocalDateTime getCreatedAt() {
