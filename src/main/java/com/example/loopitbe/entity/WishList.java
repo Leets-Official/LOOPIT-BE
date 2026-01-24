@@ -2,6 +2,7 @@ package com.example.loopitbe.entity;
 
 import jakarta.persistence.*;
 
+@Entity
 public class WishList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +15,8 @@ public class WishList {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private SellPost sellPost;
+
+    protected WishList() {}
 
     public WishList(User user, SellPost sellPost) {
         this.user = user;
