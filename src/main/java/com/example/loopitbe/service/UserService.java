@@ -37,11 +37,8 @@ public class UserService {
     }
 
     public KakaoUserResponse getUser(Long userId) {
-        User user = userRepository.findByUserId(userId).orElse(null);
-
-        if (user == null){
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         return KakaoUserResponse.toDTO(user);
     }
