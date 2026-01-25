@@ -13,4 +13,7 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
 
     // 특정 방에서 특정 유저가 보낸 메시지 외 안 읽은 메시지 조회
     List<ChatMessage> findAllByChatRoomIdAndSenderUserIdNotAndIsReadFalse(Long chatRoomId, Long userId);
+
+    // 해당 방에 내가 안 읽은 메시지가 존재하는지 확인
+    boolean existsByChatRoomIdAndSenderUserIdNotAndIsReadFalse(Long chatRoomId, Long userId);
 }

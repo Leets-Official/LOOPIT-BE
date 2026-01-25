@@ -17,11 +17,15 @@ public class ChatRoomListResponse {
     private String postTitle; // 제목 말고 기종으로 변경?
     private String postImage;
 
+    // 안읽은 메시지 존재 여부
+    private boolean hasUnreadMessages;
+
     public ChatRoomListResponse() {}
 
     public ChatRoomListResponse(
             Long roomId, Long partnerId, String partnerNickname, String partnerProfileImage,
-            String lastMessage, LocalDateTime lastMessageAt, String postTitle, String postImage) {
+            String lastMessage, LocalDateTime lastMessageAt, String postTitle, String postImage,
+            boolean hasUnreadMessages) {
         this.roomId = roomId;
         this.partnerId = partnerId;
         this.partnerNickname = partnerNickname;
@@ -30,13 +34,13 @@ public class ChatRoomListResponse {
         this.lastMessageAt = lastMessageAt;
         this.postTitle = postTitle;
         this.postImage = postImage;
+        this.hasUnreadMessages = hasUnreadMessages;
     }
 
-    public static ChatRoomListResponse from(ChatRoom room, Long myUserId) {
+    public static ChatRoomListResponse from(ChatRoom room, Long myUserId, boolean hasUnreadMessages) {
         boolean isBuyer = room.getBuyer().getUserId().equals(myUserId);
         User partner = isBuyer ? room.getSeller() : room.getBuyer();
 
-        // 추후 이미지 필드값 하나만 가져오는 걸로 수정
         String thumbnail = (room.getSellPost().getImageUrls() != null && !room.getSellPost().getImageUrls().isEmpty())
                 ? room.getSellPost().getImageUrls().get(0) : null;
 
@@ -48,7 +52,8 @@ public class ChatRoomListResponse {
                 room.getLastMessage(),
                 room.getLastMessageAt(),
                 room.getSellPost().getTitle(),
-                thumbnail
+                thumbnail,
+                hasUnreadMessages
         );
     }
 
@@ -61,4 +66,5 @@ public class ChatRoomListResponse {
     public LocalDateTime getLastMessageAt() { return lastMessageAt; }
     public String getPostTitle() { return postTitle; }
     public String getPostImage() { return postImage; }
+    public boolean isHasUnreadMessages() { return hasUnreadMessages; }
 }
