@@ -18,7 +18,8 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다."),
     GEMINI_REQUEST_ERROR(HttpStatus.BAD_GATEWAY, "제미나이 API와의 연결에서 에러가 발생했습니다."),
-    GEMINI_INVALID_RESPONSE(HttpStatus.BAD_GATEWAY, "외부 견적 서비스 응답 처리 중 오류가 발생했습니다.");
+    GEMINI_INVALID_RESPONSE(HttpStatus.BAD_GATEWAY, "외부 견적 서비스 응답 처리 중 오류가 발생했습니다."),
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String message;
