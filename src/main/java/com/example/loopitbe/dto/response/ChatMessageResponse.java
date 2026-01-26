@@ -10,6 +10,7 @@ public class ChatMessageResponse {
     private Long messageId;
     private Long roomId;
     private Long senderId;
+    private Long sellPostId;
     private String senderNickname;
     private String content;
     private MessageType type;
@@ -18,10 +19,11 @@ public class ChatMessageResponse {
 
     public ChatMessageResponse() {}
 
-    public ChatMessageResponse(Long messageId, Long roomId, Long senderId, String senderNickname, String content, MessageType type, String sendTime, boolean isRead) {
+    public ChatMessageResponse(Long messageId, Long roomId, Long senderId, Long sellPostId, String senderNickname, String content, MessageType type, String sendTime, boolean isRead) {
         this.messageId = messageId;
         this.roomId = roomId;
         this.senderId = senderId;
+        this.sellPostId = sellPostId;
         this.senderNickname = senderNickname;
         this.content = content;
         this.type = type;
@@ -39,6 +41,7 @@ public class ChatMessageResponse {
                 message.getId(),
                 message.getChatRoom().getId(),
                 message.getSender().getUserId(),
+                message.getChatRoom().getSellPost().getId(),
                 message.getSender().getNickname(),
                 message.getContent(),
                 message.getMessageType(),
@@ -50,10 +53,12 @@ public class ChatMessageResponse {
     public boolean isRead() { return isRead; }
 
     // Getters
+    public Long getMessageId() { return messageId; }
     public Long getRoomId() { return roomId; }
     public Long getSenderId() { return senderId; }
     public String getSenderNickname() { return senderNickname; }
     public String getContent() { return content; }
     public MessageType getType() { return type; }
     public String getSendTime() { return sendTime; }
+    public Long getSellPostId() { return sellPostId; }
 }

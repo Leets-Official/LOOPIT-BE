@@ -21,7 +21,9 @@ public class ChatRoom {
     @JoinColumn(name = "seller_id")
     private User seller;
 
-    //판매글(SellPost) id 필드 추가
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private SellPost sellPost;
 
     @Column(name = "last_message")
     private String lastMessage;
@@ -36,9 +38,10 @@ public class ChatRoom {
     // 기본 생성자
     protected ChatRoom() {}
 
-    public ChatRoom(User buyer, User seller) { // 추후 SellPost 객체 추가
+    public ChatRoom(User buyer, User seller, SellPost sellPost) { // 추후 SellPost 객체 추가
         this.buyer = buyer;
         this.seller = seller;
+        this.sellPost = sellPost;
     }
 
     // 마지막 메시지 업데이트 메서드 (비즈니스 로직)
@@ -54,4 +57,5 @@ public class ChatRoom {
     public String getLastMessage() { return lastMessage; }
     public LocalDateTime getLastMessageAt() { return lastMessageAt; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public SellPost getSellPost() { return sellPost; }
 }

@@ -7,11 +7,13 @@ import com.example.loopitbe.dto.response.ChatRoomDetailResponse;
 import com.example.loopitbe.dto.response.ChatRoomListResponse;
 import com.example.loopitbe.entity.ChatMessage;
 import com.example.loopitbe.entity.ChatRoom;
+import com.example.loopitbe.entity.SellPost;
 import com.example.loopitbe.entity.User;
 import com.example.loopitbe.exception.CustomException;
 import com.example.loopitbe.exception.ErrorCode;
 import com.example.loopitbe.repository.ChatMessageRepository;
 import com.example.loopitbe.repository.ChatRoomRepository;
+import com.example.loopitbe.repository.SellPostRepository;
 import com.example.loopitbe.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,13 +28,17 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
+    private final SellPostRepository sellPostRepository;
 
     public ChatService(ChatRoomRepository chatRoomRepository,
                        ChatMessageRepository chatMessageRepository,
-                       UserRepository userRepository) {
+                       UserRepository userRepository,
+                       SellPostRepository sellPostRepository
+    ) {
         this.chatRoomRepository = chatRoomRepository;
         this.chatMessageRepository = chatMessageRepository;
         this.userRepository = userRepository;
+        this.sellPostRepository = sellPostRepository;
     }
 
     // 메시지 저장
@@ -62,18 +68,22 @@ public class ChatService {
     // 채팅방 생성 및 조회 메서드
     @Transactional
     public ChatRoomDetailResponse createOrGetChatRoom(ChatRoomCreateRequest request) {
-        // 1. 이미 존재하는 채팅방인지 확인
-        // 판매글 기능이 추가되면 post_id까지 조건에 추가해야 함.
-        return chatRoomRepository.findByBuyerUserIdAndSellerUserId(request.getBuyerId(), request.getSellerId())
+        // 1. 판매글 존재 여부 확인
+        SellPost sellPost = sellPostRepository.findById(request.getSellPostId())
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        // 2. 이미 존재하는 채팅방인지 확인
+        return chatRoomRepository.findByBuyerUserIdAndSellerUserIdAndSellPostId(
+                request.getBuyerId(), request.getSellerId(), request.getSellPostId())
                 .map(ChatRoomDetailResponse::from)
                 .orElseGet(() -> {
-                    // 2. 존재하지 않으면 새로 생성
+                    // 3. 존재하지 않으면 새로 생성
                     User buyer = userRepository.findById(request.getBuyerId())
                             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
                     User seller = userRepository.findById(request.getSellerId())
                             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-                    ChatRoom newRoom = new ChatRoom(buyer, seller);
+                    ChatRoom newRoom = new ChatRoom(buyer, seller, sellPost);
                     ChatRoom savedRoom = chatRoomRepository.save(newRoom);
                     return ChatRoomDetailResponse.from(savedRoom);
                 });
