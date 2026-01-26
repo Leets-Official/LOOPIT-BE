@@ -16,6 +16,7 @@ public enum ErrorCode {
     EMPTY_JWT(HttpStatus.UNAUTHORIZED, "JWT 토큰이 비어있거나 잘못되었습니다."),
     REDIS_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 메시지 파싱 중 오류가 발생했습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
+    SELL_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "판매 게시글을 찾을 수 없습니다."),
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다."),
     GEMINI_REQUEST_ERROR(HttpStatus.BAD_GATEWAY, "제미나이 API와의 연결에서 에러가 발생했습니다."),
     GEMINI_INVALID_RESPONSE(HttpStatus.BAD_GATEWAY, "외부 견적 서비스 응답 처리 중 오류가 발생했습니다."),
