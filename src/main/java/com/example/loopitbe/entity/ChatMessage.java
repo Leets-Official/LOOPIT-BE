@@ -30,6 +30,9 @@ public class ChatMessage {
     @Column(columnDefinition = "TEXT")
     private String content; // TEXT 타입일 때만 내용 존재
 
+    @OneToOne(mappedBy = "message", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ChatImage chatImage;
+
     @Column(name = "is_read", nullable = false)
     private boolean isRead = false; // 읽음 여부 (default: false)
 
@@ -59,6 +62,7 @@ public class ChatMessage {
     public User getSender() { return sender; }
     public MessageType getMessageType() { return messageType; }
     public String getContent() { return content; }
+    public ChatImage getChatImage() { return chatImage; }
     public boolean isRead() { return isRead; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 }

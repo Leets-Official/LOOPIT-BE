@@ -15,11 +15,15 @@ public class ChatRoomListResponse {
     private LocalDateTime lastMessageAt;
     private String postImage;
 
+    // 안읽은 메시지 존재 여부
+    private boolean hasUnreadMessages;
+
     public ChatRoomListResponse() {}
 
     public ChatRoomListResponse(
             Long roomId, Long partnerId, String partnerNickname, String partnerProfileImage,
-            String lastMessage, LocalDateTime lastMessageAt, String postImage) {
+            String lastMessage, LocalDateTime lastMessageAt, String postImage,
+            boolean hasUnreadMessages) {
         this.roomId = roomId;
         this.partnerId = partnerId;
         this.partnerNickname = partnerNickname;
@@ -27,13 +31,13 @@ public class ChatRoomListResponse {
         this.lastMessage = lastMessage;
         this.lastMessageAt = lastMessageAt;
         this.postImage = postImage;
+        this.hasUnreadMessages = hasUnreadMessages;
     }
 
-    public static ChatRoomListResponse from(ChatRoom room, Long myUserId) {
+    public static ChatRoomListResponse from(ChatRoom room, Long myUserId, boolean hasUnreadMessages) {
         boolean isBuyer = room.getBuyer().getUserId().equals(myUserId);
         User partner = isBuyer ? room.getSeller() : room.getBuyer();
 
-        // 추후 이미지 필드값 하나만 가져오는 걸로 수정
         String thumbnail = (room.getSellPost().getImageUrls() != null && !room.getSellPost().getImageUrls().isEmpty())
                 ? room.getSellPost().getImageUrls().get(0) : null;
 
@@ -44,7 +48,8 @@ public class ChatRoomListResponse {
                 partner.getProfileImage(),
                 room.getLastMessage(),
                 room.getLastMessageAt(),
-                thumbnail
+                thumbnail,
+                hasUnreadMessages
         );
     }
 
@@ -56,4 +61,5 @@ public class ChatRoomListResponse {
     public String getLastMessage() { return lastMessage; }
     public LocalDateTime getLastMessageAt() { return lastMessageAt; }
     public String getPostImage() { return postImage; }
+    public boolean isHasUnreadMessages() { return hasUnreadMessages; }
 }

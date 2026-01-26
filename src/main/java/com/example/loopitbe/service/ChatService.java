@@ -5,16 +5,11 @@ import com.example.loopitbe.dto.request.ChatRoomCreateRequest;
 import com.example.loopitbe.dto.response.ChatMessageResponse;
 import com.example.loopitbe.dto.response.ChatRoomDetailResponse;
 import com.example.loopitbe.dto.response.ChatRoomListResponse;
-import com.example.loopitbe.entity.ChatMessage;
-import com.example.loopitbe.entity.ChatRoom;
-import com.example.loopitbe.entity.SellPost;
-import com.example.loopitbe.entity.User;
+import com.example.loopitbe.entity.*;
+import com.example.loopitbe.enums.MessageType;
 import com.example.loopitbe.exception.CustomException;
 import com.example.loopitbe.exception.ErrorCode;
-import com.example.loopitbe.repository.ChatMessageRepository;
-import com.example.loopitbe.repository.ChatRoomRepository;
-import com.example.loopitbe.repository.SellPostRepository;
-import com.example.loopitbe.repository.UserRepository;
+import com.example.loopitbe.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,16 +24,19 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
     private final SellPostRepository sellPostRepository;
+    private final ChatImageRepository chatImageRepository;
 
     public ChatService(ChatRoomRepository chatRoomRepository,
                        ChatMessageRepository chatMessageRepository,
                        UserRepository userRepository,
-                       SellPostRepository sellPostRepository
+                       SellPostRepository sellPostRepository,
+                       ChatImageRepository chatImageRepository
     ) {
         this.chatRoomRepository = chatRoomRepository;
         this.chatMessageRepository = chatMessageRepository;
         this.userRepository = userRepository;
         this.sellPostRepository = sellPostRepository;
+        this.chatImageRepository = chatImageRepository;
     }
 
     // 메시지 저장
@@ -49,19 +47,31 @@ public class ChatService {
         User sender = userRepository.findById(request.getSenderId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // 2. 메시지 엔티티 생성 및 저장
+        // 2. 메시지 내용 처리 (이미지일 경우, 실제 URL은 ChatImage에 저장)
+        String msgContent = request.getContent();
+        if (request.getType() == MessageType.IMAGE) {
+            msgContent = "이미지를 보냈습니다."; // 채팅방 목록에서 보여줄 대체 텍스트
+        }
+
+        // 3. 메시지 엔티티 생성 및 저장
         ChatMessage message = new ChatMessage(
                 room,
                 sender,
                 request.getType(),
-                request.getContent()
+                msgContent
         );
         chatMessageRepository.save(message);
 
-        // 3. 채팅방 최신 메시지 정보 업데이트
-        room.updateLastMessage(request.getContent(), LocalDateTime.now());
+        // 4. 이미지 타입일 경우 ChatImage 테이블에 별도 저장
+        if (request.getType() == MessageType.IMAGE) {
+            ChatImage chatImage = new ChatImage(message, request.getContent());
+            chatImageRepository.save(chatImage);
+        }
 
-        // 4. 응답 DTO로 변환하여 반환
+        // 5. 채팅방 최신 메시지 정보 업데이트
+        room.updateLastMessage(msgContent, LocalDateTime.now());
+
+        // 6. 응답 DTO로 변환하여 반환
         return ChatMessageResponse.from(message);
     }
 
@@ -96,8 +106,10 @@ public class ChatService {
         List<ChatRoom> rooms = chatRoomRepository.findAllByBuyerUserIdOrSellerUserIdOrderByLastMessageAtDesc(userId, userId);
 
         List<ChatRoomListResponse> responseList = new ArrayList<>();
+
         for (ChatRoom room : rooms) {
-            responseList.add(ChatRoomListResponse.from(room, userId));
+            boolean hasUnread = chatMessageRepository.existsByChatRoomIdAndSenderUserIdNotAndIsReadFalse(room.getId(), userId);
+            responseList.add(ChatRoomListResponse.from(room, userId, hasUnread));
         }
         return responseList;
     }
