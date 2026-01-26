@@ -1,7 +1,5 @@
 package com.example.loopitbe.service;
 
-import com.example.loopitbe.dto.response.PresignedUrlResponse;
-import com.example.loopitbe.enums.ImageDomain;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -23,38 +21,44 @@ public class S3Service {
         this.s3Presigner = s3Presigner;
     }
 
-    public PresignedUrlResponse generatePresignedUrl(ImageDomain domain, String fileName) {
-        String presignedUrl = getPresignedUrl(domain.getPrefix(), fileName);
-        return new PresignedUrlResponse(presignedUrl);
-    }
-
+    /**
+     * Presigned URL 생성
+     * @param prefix 저장할 폴더 경로 (예: "chats", "products")
+     * @param fileName 원본 파일명
+     * @return 생성된 Presigned URL 문자열
+     */
     public String getPresignedUrl(String prefix, String fileName) {
-        // 리뷰 반영: prefix 끝에 슬래시(/)가 없으면 자동으로 추가
-        if (prefix != null && !prefix.endsWith("/")) {
+        if (!prefix.endsWith("/")) {
             prefix += "/";
-        } else if (prefix == null) {
-            prefix = "";
         }
 
-        // 1. 저장될 파일 경로 생성 (UUID + 원본파일명)
+        // 1. 저장될 파일 경로 생성
         String fileNameWithUuid = UUID.randomUUID() + "_" + fileName;
         String key = prefix + fileNameWithUuid;
 
-        // 2. S3 업로드 요청 객체 생성
+        // 2. PutObjectRequest 생성 (업로드할 파일 정보)
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
                 .build();
 
-        // 3. Presigned URL 요청 설정 (유효기간 10분)
+        // 3. Presign 요청 생성 (유효기간 설정)
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofMinutes(10))
+                .signatureDuration(Duration.ofMinutes(10)) // 10분간 유효
                 .putObjectRequest(objectRequest)
                 .build();
 
-        // 4. 최종 URL 발급 및 반환
+        // 4. URL 발급
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
 
         return presignedRequest.url().toString();
+    }
+    /**
+     * ImageController에서 호출하는 규격에 맞춘 메서드
+     */
+    public com.example.loopitbe.dto.response.PresignedUrlResponse generatePresignedUrl(com.example.loopitbe.enums.ImageDomain domain, String fileName) {
+        String prefix = domain.name().toLowerCase() + "s";
+        String url = getPresignedUrl(prefix, fileName);
+        return new com.example.loopitbe.dto.response.PresignedUrlResponse(url);
     }
 }

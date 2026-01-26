@@ -9,9 +9,9 @@ import com.example.loopitbe.exception.CustomException;
 import com.example.loopitbe.exception.ErrorCode;
 import com.example.loopitbe.repository.SellPostRepository;
 import com.example.loopitbe.repository.UserRepository;
-import com.example.loopitbe.repository.WishListRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import com.example.loopitbe.repository.WishListRepository;
 
 import java.util.List;
 import java.util.Optional;

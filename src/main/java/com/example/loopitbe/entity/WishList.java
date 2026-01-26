@@ -34,4 +34,5 @@ public class WishList {
     public SellPost getSellPost() {
         return sellPost;
     }
+
 }

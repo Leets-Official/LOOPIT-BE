@@ -14,4 +14,6 @@ public interface WishListRepository extends JpaRepository<WishList, Long> {
     Optional<WishList> findByUser_UserIdAndSellPost_Id(Long userId, Long postId);
     @Query("SELECT w FROM WishList w JOIN FETCH w.sellPost WHERE w.user.userId = :userId")
     List<WishList> findAllByUserId(Long userId);
+
+    long countByUser_KakaoId(String kakaoId); //찜 카운팅 추가
 }

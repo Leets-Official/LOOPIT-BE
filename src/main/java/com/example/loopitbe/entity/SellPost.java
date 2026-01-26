@@ -45,6 +45,9 @@ public class SellPost {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private String status; // "판매중", "예약중", "판매완료"
+
     // 1. 기본 생성자는 외부 접근 차단 (protected)
     protected SellPost() {}
 
@@ -60,6 +63,7 @@ public class SellPost {
         this.manufacturer = manufacturer;
         this.color = color;
         this.capacity = capacity;
+        this.status = "판매중";
         this.components = components != null ? components : new ArrayList<>();
         this.imageUrls = imageUrls != null ? imageUrls : new ArrayList<>();
     }
@@ -79,6 +83,8 @@ public class SellPost {
         );
     }
 
+    public void updateStatus(String status) { this.status = status; }
+    public String getStatus() { return status; }
     public Long getId() { return id; }
     public User getUser() { return user; }
     public String getTitle() { return title; }
@@ -91,4 +97,5 @@ public class SellPost {
     public String getCapacity() { return capacity; }
     public List<String> getComponents() { return components; }
     public List<String> getImageUrls() { return imageUrls; }
+    public String getThumbnail() { return (imageUrls != null && !imageUrls.isEmpty()) ? imageUrls.get(0) : null; }
 }

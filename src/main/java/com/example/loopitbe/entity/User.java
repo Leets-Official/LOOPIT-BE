@@ -68,6 +68,14 @@ public class User {
         this.birthdate = dto.getBirthdate();
     }
 
+    public void updateUser(String nickname, String name, String email, LocalDate birthdate) {
+        this.nickname = nickname;
+        this.name = name;
+        this.email = email;
+        this.birthdate = birthdate;
+        this.updatedAt = java.time.LocalDateTime.now();
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
