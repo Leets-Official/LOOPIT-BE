@@ -13,22 +13,19 @@ public class ChatRoomListResponse {
     private String partnerProfileImage;
     private String lastMessage;
     private LocalDateTime lastMessageAt;
-
-    private String postTitle; // 제목 말고 기종으로 변경?
     private String postImage;
 
     public ChatRoomListResponse() {}
 
     public ChatRoomListResponse(
             Long roomId, Long partnerId, String partnerNickname, String partnerProfileImage,
-            String lastMessage, LocalDateTime lastMessageAt, String postTitle, String postImage) {
+            String lastMessage, LocalDateTime lastMessageAt, String postImage) {
         this.roomId = roomId;
         this.partnerId = partnerId;
         this.partnerNickname = partnerNickname;
         this.partnerProfileImage = partnerProfileImage;
         this.lastMessage = lastMessage;
         this.lastMessageAt = lastMessageAt;
-        this.postTitle = postTitle;
         this.postImage = postImage;
     }
 
@@ -47,7 +44,6 @@ public class ChatRoomListResponse {
                 partner.getProfileImage(),
                 room.getLastMessage(),
                 room.getLastMessageAt(),
-                room.getSellPost().getTitle(),
                 thumbnail
         );
     }
@@ -59,6 +55,5 @@ public class ChatRoomListResponse {
     public String getPartnerProfileImage() { return partnerProfileImage; }
     public String getLastMessage() { return lastMessage; }
     public LocalDateTime getLastMessageAt() { return lastMessageAt; }
-    public String getPostTitle() { return postTitle; }
     public String getPostImage() { return postImage; }
 }
