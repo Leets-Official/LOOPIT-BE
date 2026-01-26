@@ -68,7 +68,7 @@ public class WishListService {
     }
 
     public String toggleShopWishList(ShopWishlistToggleRequest dto){
-        Optional<ShopWishList> wishlist = shopWishListRepository.findByUser_IdAndShopName(dto.getUserId(), dto.getShopName());
+        Optional<ShopWishList> wishlist = shopWishListRepository.findByUser_UserIdAndShopName(dto.getUserId(), dto.getShopName());
 
         if (wishlist.isPresent()) {
             // 이미 존재하면 삭제
@@ -85,7 +85,7 @@ public class WishListService {
 
     @Transactional
     public List<ShopWishListResponse> getMyShopWishLists(Long userId) {
-        List<ShopWishList> shopWishLists = shopWishListRepository.findAllByUser_Id(userId);
+        List<ShopWishList> shopWishLists = shopWishListRepository.findAllByUser_UserId(userId);
 
         return shopWishLists.stream()
                 .map(ShopWishListResponse::from)
