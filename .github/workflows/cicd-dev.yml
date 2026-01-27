@@ -111,8 +111,11 @@ jobs:
             
             echo "📄 .env.test 내용 확인 (디버깅용):"
             cat .env.test
+            
+            # 사용하지 않는 모든 이미지, 컨테이너, 네트워크 삭제
+            docker system prune -af  
 
-            # 2️⃣ 기존 컨테이너 및 네트워크 정리
+            # 2️⃣ 기존 컨테이너 및 네트워크 정리 (prod에서는  -v --remove-orphans에서 -v 삭제)
             docker compose -f docker-compose.dev.yml --env-file .env.test down -v --remove-orphans
 
             # 3️⃣ 최신 이미지 풀링
