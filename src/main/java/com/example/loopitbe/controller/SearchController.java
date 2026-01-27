@@ -3,6 +3,7 @@ package com.example.loopitbe.controller;
 import com.example.loopitbe.common.ApiResponse;
 import com.example.loopitbe.service.S3Service;
 import com.example.loopitbe.service.SearchService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,10 @@ public class SearchController {
         this.service = service;
     }
 
+    @Operation(
+            summary = "기기 검색 Autocomplete",
+            description = "Contains 방식으로 앞뒤로 키워드가 포함된 모델명 return"
+    )
     @GetMapping("/autocomplete")
     public ResponseEntity<ApiResponse<List<String>>> autocomplete(@RequestParam(name = "keyword") String keyword) {
         List<String> results = service.getAutocomplete(keyword);
