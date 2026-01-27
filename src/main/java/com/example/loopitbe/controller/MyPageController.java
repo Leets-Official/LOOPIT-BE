@@ -1,6 +1,6 @@
 package com.example.loopitbe.controller;
 
-// 1. 패키지 경로 수정: loopit -> loopitbe
+import com.example.loopitbe.common.ApiResponse;
 import com.example.loopitbe.dto.response.MyPageResponse;
 import com.example.loopitbe.dto.request.ProfileUpdateRequest;
 import com.example.loopitbe.dto.response.TradeHistoryResponse;
@@ -24,38 +24,30 @@ public class MyPageController {
     }
 
     @Operation(summary = "마이페이지 메인 정보 조회")
-    @GetMapping("/{kakaoId}") // 2. @AuthenticationPrincipal 대신 경로 변수 또는 인증 객체에서 kakaoId 추출
-    public ResponseEntity<MyPageResponse> getMyPageMain(@PathVariable String kakaoId) {
-        // Long userId -> String kakaoId로 변경하여 서비스 호출
-        MyPageResponse response = myPageService.getMyPageInfo(kakaoId);
-        return ResponseEntity.ok(response);
+    @GetMapping
+    public ResponseEntity<ApiResponse<MyPageResponse>> getMyPageMain(@RequestParam Long userId) {
+        MyPageResponse response = myPageService.getMyPageInfo(userId);
+        return ResponseEntity.ok(ApiResponse.ok(response, "마이페이지 메인 정보 조회 성공."));
     }
 
     @Operation(summary = "구매/판매 내역 조회")
-    @GetMapping("/{kakaoId}/transactions")
-    public ResponseEntity<List<TradeHistoryResponse>> getTradeHistory(
-            @PathVariable String kakaoId,
+    @GetMapping("/transactions")
+    public ResponseEntity<ApiResponse<List<TradeHistoryResponse>>> getTradeHistory(
+            @RequestParam Long userId,
             @RequestParam String type,
             @RequestParam(defaultValue = "ALL") String status) {
-        List<TradeHistoryResponse> responses = myPageService.getTradeHistory(kakaoId, type, status);
-        return ResponseEntity.ok(responses);
+        List<TradeHistoryResponse> responses = myPageService.getTradeHistory(userId, type, status);
+        return ResponseEntity.ok(ApiResponse.ok(responses, "거래 내역 조회 성공."));
     }
 
     @Operation(summary = "개인정보 수정")
-    @PatchMapping("/{kakaoId}/users/me")
-    public ResponseEntity<Void> updateProfile(
-            @PathVariable String kakaoId,
+    @PatchMapping("/users/me")
+    public ResponseEntity<ApiResponse<Void>> updateProfile(
+            @RequestParam Long userId,
             @RequestBody ProfileUpdateRequest request) {
-        myPageService.updateProfile(kakaoId, request);
-        return ResponseEntity.noContent().build();
+        myPageService.updateProfile(userId, request);
+        return ResponseEntity.ok(ApiResponse.ok(null, "프로필 수정이 완료되었습니다."));
     }
 
-    @Operation(summary = "프로필 이미지 변경용 URL 발급")
-    @PostMapping("/{kakaoId}/users/me/image")
-    public ResponseEntity<String> getProfileImageUploadUrl(
-            @PathVariable String kakaoId,
-            @RequestParam String fileName) {
-        String uploadUrl = myPageService.getUploadUrl(kakaoId, fileName);
-        return ResponseEntity.ok(uploadUrl);
-    }
+    // getProfileImageUploadUrl 메서드 삭제: ImageController에서 통합 관리
 }
