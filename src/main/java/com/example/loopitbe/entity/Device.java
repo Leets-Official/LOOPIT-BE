@@ -4,7 +4,7 @@ import com.example.loopitbe.enums.DeviceCategory;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "devices")
+@Table(name = "devices", indexes = @Index(name = "idx_model", columnList = "model"))
 public class Device {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가
