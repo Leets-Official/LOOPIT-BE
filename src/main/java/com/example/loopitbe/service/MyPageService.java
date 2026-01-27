@@ -6,8 +6,9 @@ import com.example.loopitbe.dto.response.TradeHistoryResponse;
 import com.example.loopitbe.entity.SellPost;
 import com.example.loopitbe.entity.Transaction;
 import com.example.loopitbe.entity.User;
-import com.example.loopitbe.exception.CustomException; // 추가
-import com.example.loopitbe.exception.ErrorCode;       // 추가
+import com.example.loopitbe.enums.PostStatus;
+import com.example.loopitbe.exception.CustomException;
+import com.example.loopitbe.exception.ErrorCode;
 import com.example.loopitbe.repository.UserRepository;
 import com.example.loopitbe.repository.SellPostRepository;
 import com.example.loopitbe.repository.TransactionRepository;
@@ -41,11 +42,10 @@ public class MyPageService {
     }
 
     /**
-     * 마이페이지 메인 정보 조회 (userId 기준)
+     * 마이페이지 메인 정보 조회
      */
     @Transactional(readOnly = true)
     public MyPageResponse getMyPageInfo(Long userId) {
-        // CustomException 적용
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -59,7 +59,7 @@ public class MyPageService {
     }
 
     /**
-     * 거래 내역 조회 (userId 기준)
+     * 거래 내역 조회
      */
     @Transactional(readOnly = true)
     public List<TradeHistoryResponse> getTradeHistory(Long userId, String type, String status) {
@@ -70,7 +70,9 @@ public class MyPageService {
             if ("ALL".equalsIgnoreCase(status)) {
                 transactions = transactionRepository.findAllByBuyer_UserId(userId, sort);
             } else {
-                transactions = transactionRepository.findAllByBuyer_UserIdAndStatus(userId, status, sort);
+                // String status를 PostStatus Enum으로 변환
+                PostStatus postStatus = PostStatus.valueOf(status.toUpperCase());
+                transactions = transactionRepository.findAllByBuyer_UserIdAndStatus(userId, postStatus, sort);
             }
 
             return transactions.stream()
@@ -84,7 +86,9 @@ public class MyPageService {
             if ("ALL".equalsIgnoreCase(status)) {
                 posts = sellPostRepository.findAllByUser_UserId(userId, sort);
             } else {
-                posts = sellPostRepository.findAllByUser_UserIdAndStatus(userId, status, sort);
+                // String status를 PostStatus Enum으로 변환
+                PostStatus postStatus = PostStatus.valueOf(status.toUpperCase());
+                posts = sellPostRepository.findAllByUser_UserIdAndStatus(userId, postStatus, sort);
             }
 
             return posts.stream()
@@ -99,7 +103,6 @@ public class MyPageService {
      */
     @Transactional
     public void updateProfile(Long userId, ProfileUpdateRequest request) {
-        // CustomException 적용
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 

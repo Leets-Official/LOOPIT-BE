@@ -22,9 +22,12 @@ public class SellPostService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * 중고 판매 게시글 생성
+     */
     @Transactional
-    public SellPostResponse createPost(String kakaoId, SellPostRequest requestDto) {
-        User user = userRepository.findByKakaoId(kakaoId)
+    public SellPostResponse createPost(Long userId, SellPostRequest requestDto) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         SellPost sellPost = SellPost.createPost(user, requestDto);

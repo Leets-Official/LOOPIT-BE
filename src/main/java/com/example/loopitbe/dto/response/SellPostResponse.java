@@ -2,27 +2,51 @@ package com.example.loopitbe.dto.response;
 
 import com.example.loopitbe.entity.SellPost;
 import java.time.LocalDateTime;
+import java.util.List;
 
-public class SellPostResponse {
-    private final Long id;
-    private final String title;
-    private final LocalDateTime createdAt;
+public record SellPostResponse(
+        Long postId,
+        String title,
+        String content,
+        Long price,
+        String model,
+        String manufacturer,
+        String color,
+        String capacity,
 
-    public SellPostResponse(Long id, String title, LocalDateTime createdAt) {
-        this.id = id;
-        this.title = title;
-        this.createdAt = createdAt;
-    }
+        // Enum 및 상세 조건 필드
+        String status,           // "판매중", "예약중" 등
+        String batteryStatus,    // "80% 이상" 등
+        boolean isUsed,          // 중고 여부
+        boolean hasScratch,      // 스크래치 여부
+        boolean isScreenCracked, // 화면 파손 여부
 
-    public static SellPostResponse from(SellPost sellPost) {
+        List<String> imageUrls,
+        LocalDateTime createdAt
+) {
+    /**
+     * SellPost 엔티티를 SellPostResponse DTO로 변환
+     */
+    public static SellPostResponse from(SellPost post) {
         return new SellPostResponse(
-                sellPost.getId(),
-                sellPost.getTitle(),
-                sellPost.getCreatedAt()
+                post.getId(),
+                post.getTitle(),
+                post.getContent(),
+                post.getPrice(),
+                post.getModel(),
+                post.getManufacturer(),
+                post.getColor(),
+                post.getCapacity(),
+
+                post.getStatus().getDescription(),
+                post.getBatteryStatus().getDescription(),
+
+                post.isUsed(),
+                post.isHasScratch(),
+                post.isScreenCracked(),
+
+                post.getImageUrls(),
+                post.getCreatedAt()
         );
     }
-
-    public Long getId() { return id; }
-    public String getTitle() { return title; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
 }

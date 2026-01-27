@@ -3,38 +3,32 @@ package com.example.loopitbe.controller;
 import com.example.loopitbe.common.ApiResponse;
 import com.example.loopitbe.dto.request.SellPostRequest;
 import com.example.loopitbe.dto.response.SellPostResponse;
-import com.example.loopitbe.service.S3Service;
 import com.example.loopitbe.service.SellPostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-
+@Tag(name = "SellPost", description = "판매 게시글 관련 API")
 @RestController
 @RequestMapping("/sell-posts")
 public class SellPostController {
 
-    private final S3Service s3Service;
     private final SellPostService sellPostService;
 
-    public SellPostController(S3Service s3Service, SellPostService sellPostService) {
-        this.s3Service = s3Service;
+    public SellPostController(SellPostService sellPostService) {
         this.sellPostService = sellPostService;
     }
 
-    @GetMapping("/presigned-url")
-    public ResponseEntity<ApiResponse<String>> getPresignedUrl(@RequestParam String fileName) {
-        String url = s3Service.getPresignedUrl("products", fileName);
-        return ResponseEntity.ok(ApiResponse.ok(url, "Presigned URL이 생성되었습니다."));
-    }
 
+    @Operation(summary = "판매 게시글 등록")
     @PostMapping
     public ResponseEntity<ApiResponse<SellPostResponse>> createSellPost(
-            @RequestBody SellPostRequest requestDto,
-            Principal principal) {
+            @RequestParam Long userId,
+            @RequestBody SellPostRequest requestDto) {
 
-        SellPostResponse responseData = sellPostService.createPost(principal.getName(), requestDto);
+        SellPostResponse responseData = sellPostService.createPost(userId, requestDto);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

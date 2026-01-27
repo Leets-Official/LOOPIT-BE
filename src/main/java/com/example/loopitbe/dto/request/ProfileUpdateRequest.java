@@ -18,11 +18,9 @@ public class ProfileUpdateRequest {
         @Past(message = "생년월일은 과거 날짜여야 합니다.")
         private LocalDate birthdate;
 
-        // 1. 기본 생성자 (JSON 파싱 및 데이터 바인딩 시 필수)
         public ProfileUpdateRequest() {
         }
 
-        // 2. 전체 필드 생성자
         public ProfileUpdateRequest(String nickname, String name, String email, LocalDate birthdate) {
                 this.nickname = nickname;
                 this.name = name;
@@ -30,7 +28,6 @@ public class ProfileUpdateRequest {
                 this.birthdate = birthdate;
         }
 
-        // 3. Getter 및 Setter 메서드
         public String getNickname() {
                 return nickname;
         }

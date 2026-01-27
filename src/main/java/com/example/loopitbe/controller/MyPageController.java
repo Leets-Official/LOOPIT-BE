@@ -14,7 +14,7 @@ import java.util.List;
 
 @Tag(name = "MyPage", description = "마이페이지 및 계정 관리 API")
 @RestController
-@RequestMapping("/api/v1/mypage")
+@RequestMapping("/mypage")
 public class MyPageController {
 
     private final MyPageService myPageService;
@@ -49,5 +49,4 @@ public class MyPageController {
         return ResponseEntity.ok(ApiResponse.ok(null, "프로필 수정이 완료되었습니다."));
     }
 
-    // getProfileImageUploadUrl 메서드 삭제: ImageController에서 통합 관리
 }

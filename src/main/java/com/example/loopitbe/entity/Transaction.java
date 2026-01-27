@@ -1,5 +1,6 @@
 package com.example.loopitbe.entity;
 
+import com.example.loopitbe.enums.PostStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -15,7 +16,6 @@ public class Transaction {
     @JoinColumn(name = "post_id")
     private SellPost post;
 
-    // String buyerKakaoId 대신 User 엔티티와 연관관계 매핑
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id")
     private User buyer;
@@ -24,15 +24,33 @@ public class Transaction {
     @JoinColumn(name = "seller_id")
     private User seller;
 
-    private String status;
+    // 통합된 PostStatus 사용
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PostStatus status;
+
     private LocalDateTime createdAt;
+
+    protected Transaction() {}
+
+    public Transaction(SellPost post, User buyer, User seller, PostStatus status) {
+        this.post = post;
+        this.buyer = buyer;
+        this.seller = seller;
+        this.status = status;
+    }
+
+    // 상태 업데이트 메서드
+    public void updateStatus(PostStatus status) {
+        this.status = status;
+    }
 
     // Getter들
     public Long getId() { return id; }
     public SellPost getPost() { return post; }
-    public User getBuyer() { return buyer; } // 타입 변경
-    public User getSeller() { return seller; } // 타입 변경
-    public String getStatus() { return status; }
+    public User getBuyer() { return buyer; }
+    public User getSeller() { return seller; }
+    public PostStatus getStatus() { return status; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 
     @PrePersist

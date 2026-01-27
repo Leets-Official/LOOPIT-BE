@@ -1,6 +1,8 @@
 package com.example.loopitbe.entity;
 
 import com.example.loopitbe.dto.request.SellPostRequest;
+import com.example.loopitbe.enums.BatteryStatus;
+import com.example.loopitbe.enums.PostStatus;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -33,9 +35,12 @@ public class SellPost {
     private String color;
     private String capacity;
 
-    @ElementCollection
-    @CollectionTable(name = "post_components", joinColumns = @JoinColumn(name = "post_id"))
-    private List<String> components = new ArrayList<>();
+    private boolean isUsed;
+    private boolean hasScratch;
+    private boolean isScreenCracked;
+
+    @Enumerated(EnumType.STRING)
+    private BatteryStatus batteryStatus;
 
     @ElementCollection
     @CollectionTable(name = "post_images", joinColumns = @JoinColumn(name = "post_id"))
@@ -45,57 +50,56 @@ public class SellPost {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status; // "판매중", "예약중", "판매완료"
+    private PostStatus status;
 
-    // 1. 기본 생성자는 외부 접근 차단 (protected)
     protected SellPost() {}
 
-    // 2. 내부에서만 사용할 생성자 (id까지 포함된 풀 생성자)
-    private SellPost(User user, String title, String content, Long price, String model,
-                     String manufacturer, String color, String capacity,
-                     List<String> components, List<String> imageUrls) {
+    private SellPost(User user, SellPostRequest dto) {
         this.user = user;
-        this.title = title;
-        this.content = content;
-        this.price = price;
-        this.model = model;
-        this.manufacturer = manufacturer;
-        this.color = color;
-        this.capacity = capacity;
-        this.status = "판매중";
-        this.components = components != null ? components : new ArrayList<>();
-        this.imageUrls = imageUrls != null ? imageUrls : new ArrayList<>();
+        this.title = dto.getTitle();
+        this.content = dto.getDescription();
+        this.price = dto.getPrice();
+        this.model = dto.getModelName();
+        this.manufacturer = dto.getManufacturer();
+        this.color = dto.getColor();
+        this.capacity = dto.getCapacity();
+        this.isUsed = dto.isUsed();
+        this.hasScratch = dto.isHasScratch();
+        this.isScreenCracked = dto.isScreenCracked();
+        this.batteryStatus = dto.getBatteryStatus();
+
+        this.status = PostStatus.SALE; // 초기값 설정
+        this.imageUrls = dto.getImageUrls() != null ? dto.getImageUrls() : new ArrayList<>();
     }
 
     public static SellPost createPost(User user, SellPostRequest dto) {
-        return new SellPost(
-                user,
-                dto.title(),
-                dto.description(),
-                dto.price(),
-                dto.modelName(),
-                dto.manufacturer(),
-                dto.color(),
-                dto.capacity(),
-                dto.components(),
-                dto.imageUrls()
-        );
+        return new SellPost(user, dto);
     }
 
-    public void updateStatus(String status) { this.status = status; }
-    public String getStatus() { return status; }
+    public void updateStatus(PostStatus status) {
+        this.status = status;
+    }
+
+    // Getters
     public Long getId() { return id; }
     public User getUser() { return user; }
     public String getTitle() { return title; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
     public String getContent() { return content; }
     public Long getPrice() { return price; }
     public String getModel() { return model; }
     public String getManufacturer() { return manufacturer; }
     public String getColor() { return color; }
     public String getCapacity() { return capacity; }
-    public List<String> getComponents() { return components; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public PostStatus getStatus() { return status; } // 리턴 타입 변경
+    public boolean isUsed() { return isUsed; }
+    public boolean isHasScratch() { return hasScratch; }
+    public boolean isScreenCracked() { return isScreenCracked; }
+    public BatteryStatus getBatteryStatus() { return batteryStatus; }
     public List<String> getImageUrls() { return imageUrls; }
-    public String getThumbnail() { return (imageUrls != null && !imageUrls.isEmpty()) ? imageUrls.get(0) : null; }
+    public String getThumbnail() {
+        return (imageUrls != null && !imageUrls.isEmpty()) ? imageUrls.get(0) : null;
+    }
 }

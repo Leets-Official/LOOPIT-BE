@@ -1,5 +1,6 @@
 package com.example.loopitbe.dto.request;
 
+import com.example.loopitbe.enums.BatteryStatus;
 import java.util.List;
 
 public class SellPostRequest {
@@ -12,6 +13,11 @@ public class SellPostRequest {
     private String description;
     private List<String> components;
     private List<String> imageUrls;
+    private boolean isUsed;
+    private boolean hasScratch;
+    private boolean isScreenCracked;
+    private BatteryStatus batteryStatus;
+
 
     public SellPostRequest() {}
 
@@ -38,4 +44,8 @@ public class SellPostRequest {
     public String getDescription() { return description; }
     public List<String> getComponents() { return components; }
     public List<String> getImageUrls() { return imageUrls; }
+    public boolean isUsed() { return isUsed; }
+    public boolean isHasScratch() { return hasScratch; }
+    public boolean isScreenCracked() { return isScreenCracked; }
+    public BatteryStatus getBatteryStatus() { return batteryStatus; }
 }
