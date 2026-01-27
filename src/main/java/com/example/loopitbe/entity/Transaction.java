@@ -15,13 +15,14 @@ public class Transaction {
     @JoinColumn(name = "post_id")
     private SellPost post;
 
-    // Long buyerId -> String buyerKakaoId로 변경
-    @Column(nullable = false)
-    private String buyerKakaoId;
+    // String buyerKakaoId 대신 User 엔티티와 연관관계 매핑
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "buyer_id")
+    private User buyer;
 
-    // Long sellerId -> String sellerKakaoId로 변경
-    @Column(nullable = false)
-    private String sellerKakaoId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private User seller;
 
     private String status;
     private LocalDateTime createdAt;
@@ -29,12 +30,11 @@ public class Transaction {
     // Getter들
     public Long getId() { return id; }
     public SellPost getPost() { return post; }
-    public String getBuyerKakaoId() { return buyerKakaoId; } // 추가
-    public String getSellerKakaoId() { return sellerKakaoId; } // 추가
+    public User getBuyer() { return buyer; } // 타입 변경
+    public User getSeller() { return seller; } // 타입 변경
     public String getStatus() { return status; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 
-    // 생성 시점에 시간을 자동으로 넣어주는 기능 (필요시)
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();

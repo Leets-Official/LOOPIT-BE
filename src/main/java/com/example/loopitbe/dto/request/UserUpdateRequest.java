@@ -4,38 +4,42 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
 import java.time.LocalDate;
 
 public class UserUpdateRequest {
     @Size(max = 10)
-    @NotBlank
+    @NotBlank(message = "닉네임은 필수입니다.")
     private String nickname;
 
-    @NotBlank
+    @NotBlank(message = "이름은 필수입니다.")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "이메일은 필수입니다.")
     @Email
     private String email;
 
-    @NotNull
+    @NotNull(message = "생년월일은 필수입니다.")
     private LocalDate birthdate;
 
-    @NotBlank
-    public String getNickname() {
-        return nickname;
+    public UserUpdateRequest() {
     }
 
-    public String getName() {
-        return name;
+    public UserUpdateRequest(String nickname, String name, String email, LocalDate birthdate) {
+        this.nickname = nickname;
+        this.name = name;
+        this.email = email;
+        this.birthdate = birthdate;
     }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getNickname() { return nickname; }
+    public void setNickname(String nickname) { this.nickname = nickname; }
 
-    public LocalDate getBirthdate() {
-        return birthdate;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public LocalDate getBirthdate() { return birthdate; }
+    public void setBirthdate(LocalDate birthdate) { this.birthdate = birthdate; }
 }
