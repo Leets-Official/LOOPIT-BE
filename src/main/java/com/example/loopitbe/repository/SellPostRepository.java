@@ -16,4 +16,6 @@ public interface SellPostRepository extends JpaRepository<SellPost, Long>, JpaSp
             List<String> models,
             Long currentPostId
     );
+
+    List<SellPost> findTop4ByUser_UserIdAndIdNotOrderByCreatedAtDesc(Long userId, Long postId);
 }

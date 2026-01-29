@@ -27,9 +27,20 @@ public class SearchController {
             summary = "기기 검색 Autocomplete",
             description = "Contains 방식으로 앞뒤로 키워드가 포함된 모델명 return"
     )
-    @GetMapping("/autocomplete")
-    public ResponseEntity<ApiResponse<List<String>>> autocomplete(@RequestParam(name = "keyword") String keyword) {
-        List<String> results = service.getAutocomplete(keyword);
+    @GetMapping("/autocomplete/sell")
+    public ResponseEntity<ApiResponse<List<String>>> autocompleteSell(@RequestParam(name = "keyword") String keyword) {
+        List<String> results = service.getSellAutocomplete(keyword);
+        return ResponseEntity.ok(ApiResponse.ok(results, "Auto complete"));
+    }
+
+
+    @Operation(
+            summary = "구매하기 검색창 Autocomplete",
+            description = "Contains 방식으로 앞뒤로 키워드가 포함된 모델명 return"
+    )
+    @GetMapping("/autocomplete/buy")
+    public ResponseEntity<ApiResponse<List<String>>> autocompleteBuy(@RequestParam(name = "keyword") String keyword) {
+        List<String> results = service.getBuyAutocomplete(keyword);
         return ResponseEntity.ok(ApiResponse.ok(results, "Auto complete"));
     }
 }

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/sell-posts")
+@RequestMapping("/sell-post")
 public class SellPostController {
 
     private final SellPostService sellPostService;
@@ -59,9 +59,7 @@ public class SellPostController {
             description = "특정 판매글의 상세 정보 및 동일한 시리즈 상품을 최대 4개 조회"
     )
     @GetMapping("/{postId}")
-    public ResponseEntity<ApiResponse<SellPostDetailResponse>> getSellPostDetail(
-            @PathVariable Long postId
-    ) {
+    public ResponseEntity<ApiResponse<SellPostDetailResponse>> getSellPostDetail(@PathVariable Long postId) {
         SellPostDetailResponse response = sellPostService.getSellPostDetail(postId);
 
         return ResponseEntity.ok(ApiResponse.ok(response, "판매글 상세 조회 성공."));

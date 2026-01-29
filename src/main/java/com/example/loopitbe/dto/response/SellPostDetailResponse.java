@@ -33,7 +33,10 @@ public class SellPostDetailResponse {
     // 비슷한 상품 리스트
     private List<SimilarPostResponse> similarPosts;
 
-    public SellPostDetailResponse(SellPost post, List<SimilarPostResponse> similarPosts) {
+    // 판매자가 올린 판매글 리스트
+    private List<PostBySellerResponse> postsBySeller;
+
+    public SellPostDetailResponse(SellPost post, List<SimilarPostResponse> similarPosts, List<PostBySellerResponse> postsBySeller) {
         User seller = post.getUser();
 
         this.id = post.getId();
@@ -57,6 +60,7 @@ public class SellPostDetailResponse {
         this.sellerProfileImage = seller.getProfileImage();
 
         this.similarPosts = similarPosts;
+        this.postsBySeller = postsBySeller;
     }
 
     // Getters
@@ -78,4 +82,5 @@ public class SellPostDetailResponse {
     public String getSellerNickname() { return sellerNickname; }
     public String getSellerProfileImage() { return sellerProfileImage; }
     public List<SimilarPostResponse> getSimilarPosts() { return similarPosts; }
+    public List<PostBySellerResponse> getPostsBySeller() { return postsBySeller; }
 }
