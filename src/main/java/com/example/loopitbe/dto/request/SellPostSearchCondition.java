@@ -27,4 +27,24 @@ public class SellPostSearchCondition {
     public List<String> getSeries() { return series; }
     public PriceRange getPriceRange() { return priceRange; }
     public String getKeyword() { return keyword; }
+
+    public void setOnlySale(Boolean onlySale) {
+        this.onlySale = onlySale;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public void setSeries(List<String> series) {
+        this.series = series;
+    }
+
+    public void setPriceRange(PriceRange priceRange) {
+        this.priceRange = priceRange;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
 }
