@@ -1,11 +1,12 @@
 package com.example.loopitbe.entity;
 
 import com.example.loopitbe.dto.request.KakaoUserCreateRequest;
+import com.example.loopitbe.dto.request.ProfileUpdateRequest;
 import com.example.loopitbe.dto.request.UserUpdateRequest;
 import com.example.loopitbe.enums.LoginProvider;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+        import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -66,14 +67,19 @@ public class User {
         this.name = dto.getName();
         this.email = dto.getEmail();
         this.birthdate = dto.getBirthdate();
+        this.updatedAt = LocalDateTime.now();
     }
 
-    public void updateUser(String nickname, String name, String email, LocalDate birthdate) {
-        this.nickname = nickname;
-        this.name = name;
-        this.email = email;
-        this.birthdate = birthdate;
-        this.updatedAt = java.time.LocalDateTime.now();
+    public void updateUser(ProfileUpdateRequest dto) {
+        this.nickname = dto.getNickname();
+        this.email = dto.getEmail();
+        this.birthdate = dto.getBirthdate();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updateProfileImage(String newProfileImage) {
+        this.profileImage = newProfileImage;
+        this.updatedAt = java.time.LocalDateTime.now(); // 수정 시 업데이트 시간 갱신
     }
 
     public LocalDateTime getCreatedAt() {
@@ -112,3 +118,4 @@ public class User {
         return profileImage;
     }
 }
+

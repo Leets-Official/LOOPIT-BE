@@ -56,6 +56,7 @@ public class SellPost {
 
     protected SellPost() {}
 
+
     private SellPost(User user, SellPostRequest dto) {
         this.user = user;
         this.title = dto.getTitle();
@@ -69,13 +70,30 @@ public class SellPost {
         this.hasScratch = dto.isHasScratch();
         this.isScreenCracked = dto.isScreenCracked();
         this.batteryStatus = dto.getBatteryStatus();
-
-        this.status = PostStatus.SALE; // 초기값 설정
+        this.imageUrls = dto.getImageUrls() != null ? dto.getImageUrls() : new ArrayList<>();
+        this.status = PostStatus.SALE;
         this.imageUrls = dto.getImageUrls() != null ? dto.getImageUrls() : new ArrayList<>();
     }
 
     public static SellPost createPost(User user, SellPostRequest dto) {
         return new SellPost(user, dto);
+    }
+
+    public void update(SellPostRequest dto) {
+        this.title = dto.getTitle();
+        this.content = dto.getDescription();
+        this.price = dto.getPrice();
+        this.model = dto.getModelName();
+        this.manufacturer = dto.getManufacturer();
+        this.color = dto.getColor();
+        this.capacity = dto.getCapacity();
+        this.isUsed = dto.isUsed();
+        this.hasScratch = dto.isHasScratch();
+        this.isScreenCracked = dto.isScreenCracked();
+        this.batteryStatus = dto.getBatteryStatus();
+        if (dto.getImageUrls() != null) {
+            this.imageUrls = dto.getImageUrls();
+        }
     }
 
     public void updateStatus(PostStatus status) {
