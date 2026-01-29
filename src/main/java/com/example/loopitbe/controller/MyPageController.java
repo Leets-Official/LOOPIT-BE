@@ -44,8 +44,10 @@ public class MyPageController {
     @PatchMapping("/users/me")
     public ResponseEntity<ApiResponse<Void>> updateProfile(
             @RequestParam Long userId,
-            @RequestBody ProfileUpdateRequest request) {
-        myPageService.updateProfile(userId, request);
+            @RequestBody ProfileUpdateRequest request,
+            @RequestParam(required = false) String newProfileImage) {
+
+        myPageService.updateProfile(userId, request, newProfileImage);
         return ResponseEntity.ok(ApiResponse.ok(null, "프로필 수정이 완료되었습니다."));
     }
 

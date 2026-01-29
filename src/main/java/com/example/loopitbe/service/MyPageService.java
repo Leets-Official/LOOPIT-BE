@@ -102,21 +102,25 @@ public class MyPageService {
      * 개인정보 수정
      */
     @Transactional
-    public void updateProfile(Long userId, ProfileUpdateRequest request) {
+    public void updateProfile(Long userId, ProfileUpdateRequest request, String newProfileImage) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        // 닉네임 중복 체크
         if (!user.getNickname().equals(request.getNickname())) {
             if (userRepository.existsUserByNickname(request.getNickname())) {
                 throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
             }
         }
 
-        user.updateUser(
-                request.getNickname(),
-                request.getName(),
-                request.getEmail(),
-                request.getBirthdate()
-        );
+        // 이미지 삭제 및 업데이트
+        if (newProfileImage != null && !newProfileImage.equals(user.getProfileImage())) {
+            if (user.getProfileImage() != null) {
+                s3Service.deleteFile(user.getProfileImage());
+            }
+            user.updateProfileImage(newProfileImage);
+        }
+
+        user.updateUser(request);
     }
 }
