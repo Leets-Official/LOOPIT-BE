@@ -2,9 +2,14 @@ package com.example.loopitbe.controller;
 
 import com.example.loopitbe.common.ApiResponse;
 import com.example.loopitbe.dto.request.SellPostRequest;
+import com.example.loopitbe.dto.request.SellPostSearchCondition;
+import com.example.loopitbe.dto.response.SellPostDetailResponse;
+import com.example.loopitbe.dto.response.SellPostListResponse;
 import com.example.loopitbe.dto.response.SellPostResponse;
-import com.example.loopitbe.service.S3Service;
+import com.example.loopitbe.enums.PriceRange;
 import com.example.loopitbe.service.SellPostService;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,18 +20,10 @@ import java.security.Principal;
 @RequestMapping("/sell-posts")
 public class SellPostController {
 
-    private final S3Service s3Service;
     private final SellPostService sellPostService;
 
-    public SellPostController(S3Service s3Service, SellPostService sellPostService) {
-        this.s3Service = s3Service;
+    public SellPostController(SellPostService sellPostService) {
         this.sellPostService = sellPostService;
-    }
-
-    @GetMapping("/presigned-url")
-    public ResponseEntity<ApiResponse<String>> getPresignedUrl(@RequestParam String fileName) {
-        String url = s3Service.getPresignedUrl("products", fileName);
-        return ResponseEntity.ok(ApiResponse.ok(url, "Presigned URL이 생성되었습니다."));
     }
 
     @PostMapping
@@ -39,5 +36,34 @@ public class SellPostController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.ok(responseData, "판매글이 성공적으로 등록되었습니다."));
+    }
+
+    // 판매글 목록 조회
+    @Operation(
+            summary = "판매글 목록 조회",
+            description = "판매 상태, 제조사, 시리즈, 가격대 필터를 적용하여 판매글 목록을 10개씩 페이징 조회"
+    )
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<SellPostListResponse>>> getSellPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @ModelAttribute SellPostSearchCondition condition
+    ) {
+        Page<SellPostListResponse> result = sellPostService.getSellPosts(page, condition);
+
+        return ResponseEntity.ok(ApiResponse.ok(result, "판매글 목록 조회 성공."));
+    }
+
+    // 판매글 상세 조회
+    @Operation(
+            summary = "판매글 상세 조회",
+            description = "특정 판매글의 상세 정보 및 동일한 시리즈 상품을 최대 4개 조회"
+    )
+    @GetMapping("/{postId}")
+    public ResponseEntity<ApiResponse<SellPostDetailResponse>> getSellPostDetail(
+            @PathVariable Long postId
+    ) {
+        SellPostDetailResponse response = sellPostService.getSellPostDetail(postId);
+
+        return ResponseEntity.ok(ApiResponse.ok(response, "판매글 상세 조회 성공."));
     }
 }

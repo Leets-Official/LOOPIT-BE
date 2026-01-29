@@ -1,17 +1,23 @@
 package com.example.loopitbe.dto.request;
 
+import com.example.loopitbe.enums.BatteryStatus;
+
 import java.util.List;
 
 public class SellPostRequest {
-    private final String title;
-    private final String manufacturer;
-    private final String modelName;
-    private final String color;
-    private final String capacity;
-    private final Long price;
-    private final String description;
-    private final List<String> components;
-    private final List<String> imageUrls;
+    private String title;
+    private String manufacturer;
+    private String modelName;
+    private String color;
+    private String capacity;
+    private Long price;
+    private String description;
+    private List<String> components;
+    private List<String> imageUrls;
+    private boolean isUsed;
+    private boolean hasScratch;
+    private boolean isScreenCracked;
+    private BatteryStatus batteryStatus;
 
     public SellPostRequest(String title, String manufacturer, String modelName, String color,
                            String capacity, Long price, String description,
@@ -27,13 +33,17 @@ public class SellPostRequest {
         this.imageUrls = imageUrls;
     }
 
-    public String title() { return title; }
-    public String manufacturer() { return manufacturer; }
-    public String modelName() { return modelName; }
-    public String color() { return color; }
-    public String capacity() { return capacity; }
-    public Long price() { return price; }
-    public String description() { return description; }
-    public List<String> components() { return components; }
-    public List<String> imageUrls() { return imageUrls; }
+    public String getTitle() { return title; }
+    public String getManufacturer() { return manufacturer; }
+    public String getModelName() { return modelName; }
+    public String getColor() { return color; }
+    public String getCapacity() { return capacity; }
+    public Long getPrice() { return price; }
+    public String getDescription() { return description; }
+    public List<String> getComponents() { return components; }
+    public List<String> getImageUrls() { return imageUrls; }
+    public boolean isUsed() { return isUsed; }
+    public boolean isHasScratch() { return hasScratch; }
+    public boolean isScreenCracked() { return isScreenCracked; }
+    public BatteryStatus getBatteryStatus() { return batteryStatus; }
 }
