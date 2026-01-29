@@ -41,7 +41,13 @@ public class SellPostService {
         User user = userRepository.findByKakaoId(kakaoId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        SellPost sellPost = SellPost.createPost(user, requestDto);
+        // 시리즈 정보 저장
+        Device device = deviceRepository.findByModel(requestDto.getModelName())
+                .orElseThrow(() -> new CustomException(ErrorCode.DEVICE_NOT_FOUND));
+
+        String series = device.getSeries();
+
+        SellPost sellPost = SellPost.createPost(user, requestDto, series);
         SellPost savedPost = sellPostRepository.save(sellPost);
 
         return SellPostResponse.from(savedPost);
@@ -72,21 +78,23 @@ public class SellPostService {
     }
 
     private List<SimilarPostResponse> getSimilarPosts(SellPost currentPost) {
-        return deviceRepository.findByModel(currentPost.getModel())
-                .map(device -> {
-                    // 같은 시리즈에 속하는 모든 모델명 추출
-                    List<String> sameSeriesModels = deviceRepository.findAllBySeries(device.getSeries())
-                            .stream()
-                            .map(Device::getModel)
-                            .toList();
+        String currentSeries = currentPost.getSeries();
 
-                    return sellPostRepository.findTop4ByManufacturerAndModelInAndIdNotOrderByCreatedAtDesc(
-                            currentPost.getManufacturer(),
-                            sameSeriesModels,
-                            currentPost.getId()
-                    );
-                })
-                .orElseGet(List::of)
+        List<String> sameSeriesModels = deviceRepository.findAllBySeries(currentSeries)
+                .stream()
+                .map(Device::getModel)
+                .toList();
+
+        // 유사 상품이 없을 경우 빈 리스트 반환
+        if (sameSeriesModels.isEmpty()) {
+            return List.of();
+        }
+
+        return sellPostRepository.findTop4ByManufacturerAndModelInAndIdNotOrderByCreatedAtDesc(
+                        currentPost.getManufacturer(),
+                        sameSeriesModels,
+                        currentPost.getId()
+                )
                 .stream()
                 .map(SimilarPostResponse::from)
                 .collect(Collectors.toList());

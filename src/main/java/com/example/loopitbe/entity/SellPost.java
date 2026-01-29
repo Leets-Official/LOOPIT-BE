@@ -54,9 +54,12 @@ public class SellPost {
     @Column(nullable = false)
     private PostStatus status;
 
+    @Column(nullable = false)
+    private String series;
+
     protected SellPost() {}
 
-    private SellPost(User user, SellPostRequest dto) {
+    private SellPost(User user, SellPostRequest dto, String series) {
         this.title = dto.getTitle();
         this.content = dto.getDescription();
         this.price = dto.getPrice();
@@ -71,10 +74,13 @@ public class SellPost {
 
         this.status = PostStatus.SALE; // 초기값 설정
         this.imageUrls = dto.getImageUrls() != null ? dto.getImageUrls() : new ArrayList<>();
+
+        // 시리즈 정보 저장
+        this.series = series;
     }
 
-    public static SellPost createPost(User user, SellPostRequest dto) {
-        return new SellPost(user, dto);
+    public static SellPost createPost(User user, SellPostRequest dto, String series) {
+        return new SellPost(user, dto, series);
     }
 
     public void updateStatus(PostStatus status) {
@@ -100,4 +106,5 @@ public class SellPost {
     public String getThumbnail() {
         return (imageUrls != null && !imageUrls.isEmpty()) ? imageUrls.get(0) : null;
     }
+    public String getSeries() { return series; }
 }

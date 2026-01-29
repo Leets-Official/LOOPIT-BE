@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequestMapping("/sell-posts")
@@ -47,14 +46,8 @@ public class SellPostController {
     @GetMapping
     public ResponseEntity<ApiResponse<Page<SellPostListResponse>>> getSellPosts(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(required = false) Boolean onlySale,
-            @RequestParam(required = false) String manufacturer,
-            @RequestParam(required = false) List<String> series,
-            @RequestParam(required = false) PriceRange priceRange
+            @ModelAttribute SellPostSearchCondition condition
     ) {
-        // dto 파일로 변환
-        SellPostSearchCondition condition = new SellPostSearchCondition(onlySale, manufacturer, series, priceRange);
-
         Page<SellPostListResponse> result = sellPostService.getSellPosts(page, condition);
 
         return ResponseEntity.ok(ApiResponse.ok(result, "판매글 목록 조회 성공."));
