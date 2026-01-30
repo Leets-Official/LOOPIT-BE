@@ -21,7 +21,10 @@ public enum ErrorCode {
     GEMINI_REQUEST_ERROR(HttpStatus.BAD_GATEWAY, "제미나이 API와의 연결에서 에러가 발생했습니다."),
     GEMINI_INVALID_RESPONSE(HttpStatus.BAD_GATEWAY, "외부 견적 서비스 응답 처리 중 오류가 발생했습니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
-    DEVICE_NOT_FOUND(HttpStatus.NOT_FOUND, "기기를 찾을 수 없습니다.");
+    DEVICE_NOT_FOUND(HttpStatus.NOT_FOUND, "기기를 찾을 수 없습니다."),
+    IMAGE_COUNT_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 이미지 업로드 개수를 초과했습니다."),
+    IMAGE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 삭제에 실패했습니다.");
+
 
     private final HttpStatus status;
     private final String message;
