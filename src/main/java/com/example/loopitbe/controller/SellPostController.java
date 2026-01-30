@@ -7,8 +7,6 @@ import com.example.loopitbe.dto.response.SellPostDetailResponse;
 import com.example.loopitbe.dto.response.SellPostListResponse;
 import com.example.loopitbe.dto.response.SellPostResponse;
 import com.example.loopitbe.dto.response.UserSellPostResponse;
-import com.example.loopitbe.service.S3Service;
-import com.example.loopitbe.enums.PriceRange;
 import com.example.loopitbe.service.SellPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
@@ -40,8 +38,6 @@ public class SellPostController {
                 .body(ApiResponse.ok(responseData, "판매글이 성공적으로 등록되었습니다."));
     }
 
-
-
     @Operation(
             summary = "사용자의 판매글 조회",
             description = "userId에 해당하는 판매글 리스트 return. 10개씩 페이지네이션 적용."
@@ -49,8 +45,9 @@ public class SellPostController {
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<Page<UserSellPostResponse>>> getSellPostByUser(
             @PathVariable Long userId,
-            @RequestParam(defaultValue = "0") int page){
+            @RequestParam(defaultValue = "0") int page) {
         return ResponseEntity.ok(ApiResponse.ok(sellPostService.getSellPostByUser(userId, page), "사용자 판매글 조회 성공."));
+    }
     // 판매글 목록 조회
     @Operation(
             summary = "판매글 목록 조회",
@@ -79,4 +76,5 @@ public class SellPostController {
 
         return ResponseEntity.ok(ApiResponse.ok(response, "판매글 상세 조회 성공."));
     }
+
 }

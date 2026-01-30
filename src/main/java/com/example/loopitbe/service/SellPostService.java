@@ -58,7 +58,7 @@ public class SellPostService {
         return SellPostResponse.from(savedPost);
     }
 
-    public Page<UserSellPostResponse> getSellPostByUser(Long userId, int page){
+    public Page<UserSellPostResponse> getSellPostByUser(Long userId, int page) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -67,6 +67,7 @@ public class SellPostService {
         Page<SellPost> posts = sellPostRepository.findAllByUser_UserId(userId, pageable);
 
         return posts.map(UserSellPostResponse::from);
+    }
     // 목록 조회
     @Transactional(readOnly = true)
     public Page<SellPostListResponse> getSellPosts(int page, SellPostSearchCondition condition) {
