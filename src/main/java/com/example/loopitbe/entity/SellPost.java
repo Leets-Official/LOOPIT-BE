@@ -1,6 +1,8 @@
 package com.example.loopitbe.entity;
 
 import com.example.loopitbe.dto.request.SellPostRequest;
+import com.example.loopitbe.enums.BatteryStatus;
+import com.example.loopitbe.enums.PostStatus;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -33,9 +35,12 @@ public class SellPost {
     private String color;
     private String capacity;
 
-    @ElementCollection
-    @CollectionTable(name = "post_components", joinColumns = @JoinColumn(name = "post_id"))
-    private List<String> components = new ArrayList<>();
+    private boolean isUsed;
+    private boolean hasScratch;
+    private boolean isScreenCracked;
+
+    @Enumerated(EnumType.STRING)
+    private BatteryStatus batteryStatus;
 
     @ElementCollection
     @CollectionTable(name = "post_images", joinColumns = @JoinColumn(name = "post_id"))
@@ -45,38 +50,41 @@ public class SellPost {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    // 1. 기본 생성자는 외부 접근 차단 (protected)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PostStatus status;
+
+    @Column(nullable = false)
+    private String series;
+
     protected SellPost() {}
 
-    // 2. 내부에서만 사용할 생성자 (id까지 포함된 풀 생성자)
-    private SellPost(User user, String title, String content, Long price, String model,
-                     String manufacturer, String color, String capacity,
-                     List<String> components, List<String> imageUrls) {
-        this.user = user;
-        this.title = title;
-        this.content = content;
-        this.price = price;
-        this.model = model;
-        this.manufacturer = manufacturer;
-        this.color = color;
-        this.capacity = capacity;
-        this.components = components != null ? components : new ArrayList<>();
-        this.imageUrls = imageUrls != null ? imageUrls : new ArrayList<>();
+    private SellPost(User user, SellPostRequest dto, String series) {
+        this.title = dto.getTitle();
+        this.content = dto.getDescription();
+        this.price = dto.getPrice();
+        this.model = dto.getModelName();
+        this.manufacturer = dto.getManufacturer();
+        this.color = dto.getColor();
+        this.capacity = dto.getCapacity();
+        this.isUsed = dto.isUsed();
+        this.hasScratch = dto.isHasScratch();
+        this.isScreenCracked = dto.isScreenCracked();
+        this.batteryStatus = dto.getBatteryStatus();
+
+        this.status = PostStatus.SALE; // 초기값 설정
+        this.imageUrls = dto.getImageUrls() != null ? dto.getImageUrls() : new ArrayList<>();
+
+        // 시리즈 정보 저장
+        this.series = series;
     }
 
-    public static SellPost createPost(User user, SellPostRequest dto) {
-        return new SellPost(
-                user,
-                dto.title(),
-                dto.description(),
-                dto.price(),
-                dto.modelName(),
-                dto.manufacturer(),
-                dto.color(),
-                dto.capacity(),
-                dto.components(),
-                dto.imageUrls()
-        );
+    public static SellPost createPost(User user, SellPostRequest dto, String series) {
+        return new SellPost(user, dto, series);
+    }
+
+    public void updateStatus(PostStatus status) {
+        this.status = status;
     }
 
     public Long getId() { return id; }
@@ -89,6 +97,14 @@ public class SellPost {
     public String getManufacturer() { return manufacturer; }
     public String getColor() { return color; }
     public String getCapacity() { return capacity; }
-    public List<String> getComponents() { return components; }
+    public PostStatus getStatus() { return status; } // 리턴 타입 변경
+    public boolean isUsed() { return isUsed; }
+    public boolean isHasScratch() { return hasScratch; }
+    public boolean isScreenCracked() { return isScreenCracked; }
+    public BatteryStatus getBatteryStatus() { return batteryStatus; }
     public List<String> getImageUrls() { return imageUrls; }
+    public String getThumbnail() {
+        return (imageUrls != null && !imageUrls.isEmpty()) ? imageUrls.get(0) : null;
+    }
+    public String getSeries() { return series; }
 }

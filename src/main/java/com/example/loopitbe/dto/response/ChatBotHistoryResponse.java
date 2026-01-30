@@ -2,8 +2,8 @@ package com.example.loopitbe.dto.response;
 
 public class ChatBotHistoryResponse {
     // User 또는 Bot
-    private String role;
-    private String message;
+    private final String role;
+    private final String message;
 
     public ChatBotHistoryResponse(String role, String message) {
         this.role = role;

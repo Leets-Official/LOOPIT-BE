@@ -4,7 +4,7 @@ import com.example.loopitbe.entity.SellPost;
 
 import java.time.LocalDateTime;
 
-public class WishListSellPostResponse {
+public class SellPostWishListResponse {
     private Long postId;
     private String title;
     private Long price;
@@ -30,8 +30,8 @@ public class WishListSellPostResponse {
     }
 
     // Entity -> DTO
-    public static WishListSellPostResponse from(SellPost post){
-        WishListSellPostResponse response = new WishListSellPostResponse();
+    public static SellPostWishListResponse from(SellPost post){
+        SellPostWishListResponse response = new SellPostWishListResponse();
 
         response.postId =  post.getId();
         response.title =  post.getTitle();

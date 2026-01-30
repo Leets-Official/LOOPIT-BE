@@ -3,7 +3,7 @@ package com.example.loopitbe.entity;
 import jakarta.persistence.*;
 
 @Entity
-public class WishList {
+public class PostWishList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,9 +16,9 @@ public class WishList {
     @JoinColumn(name = "post_id")
     private SellPost sellPost;
 
-    protected WishList() {}
+    protected PostWishList() {}
 
-    public WishList(User user, SellPost sellPost) {
+    public PostWishList(User user, SellPost sellPost) {
         this.user = user;
         this.sellPost = sellPost;
     }
