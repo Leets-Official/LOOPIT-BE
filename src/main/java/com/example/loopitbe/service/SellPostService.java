@@ -70,13 +70,8 @@ public class SellPostService {
         // 2. 비슷한 상품 조회 로직
         List<SimilarPostResponse> similarPostResponses = getSimilarPosts(post);
 
-        // 3. 판매자의 다른 판매 게시글 조회 (현재 게시글은 검색 대상에서 제외)
-        List<PostBySellerResponse> postBySellerResponses =
-                sellPostRepository.findTop4ByUser_UserIdAndIdNotOrderByCreatedAtDesc(post.getUser().getUserId(), postId)
-                        .stream().map(PostBySellerResponse::from).toList();
-
         // 3. DTO 변환 및 반환
-        return new SellPostDetailResponse(post, similarPostResponses, postBySellerResponses);
+        return new SellPostDetailResponse(post, similarPostResponses);
     }
 
     private List<SimilarPostResponse> getSimilarPosts(SellPost currentPost) {
