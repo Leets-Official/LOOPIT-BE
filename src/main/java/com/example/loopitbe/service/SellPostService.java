@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.loopitbe.exception.CustomException;
 import com.example.loopitbe.exception.ErrorCode;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,11 +30,13 @@ public class SellPostService {
     private final SellPostRepository sellPostRepository;
     private final UserRepository userRepository;
     private final DeviceRepository deviceRepository;
+    private final S3Service s3Service;
 
-    public SellPostService(SellPostRepository sellPostRepository, UserRepository userRepository, DeviceRepository deviceRepository) {
+    public SellPostService(SellPostRepository sellPostRepository, UserRepository userRepository, DeviceRepository deviceRepository, S3Service s3Service) {
         this.sellPostRepository = sellPostRepository;
         this.userRepository = userRepository;
         this.deviceRepository = deviceRepository;
+        this.s3Service = s3Service;
     }
 
     @Transactional
@@ -42,7 +45,7 @@ public class SellPostService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 시리즈 정보 저장
-        Device device = deviceRepository.findByModel(requestDto.getModelName())
+        Device device = deviceRepository.findByModel(requestDto.getModel())
                 .orElseThrow(() -> new CustomException(ErrorCode.DEVICE_NOT_FOUND));
 
         String series = device.getSeries();
@@ -75,6 +78,61 @@ public class SellPostService {
 
         // 3. DTO 변환 및 반환
         return new SellPostDetailResponse(post, similarPostResponses);
+    }
+
+    // 수정
+    @Transactional
+    public SellPostResponse updatePost(Long postId, Long userId, SellPostRequest requestDto) {
+        SellPost post = sellPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        // 본인 확인
+        validateWriter(post, userId);
+
+        // 이미지 비교 및 삭제 로직
+        List<String> oldImages = post.getImageUrls();
+        List<String> newImages = requestDto.getImageUrls() != null ? requestDto.getImageUrls() : new ArrayList<>();
+
+        for (String oldUrl : oldImages) {
+            if (!newImages.contains(oldUrl)) {
+                s3Service.deleteImage(oldUrl);
+            }
+        }
+
+        // 시리즈 정보 업데이트
+        String newSeries = post.getSeries();
+        if (!post.getModel().equals(requestDto.getModel())) {
+            Device device = deviceRepository.findByModel(requestDto.getModel())
+                    .orElseThrow(() -> new CustomException(ErrorCode.DEVICE_NOT_FOUND));
+            newSeries = device.getSeries();
+        }
+
+        post.updatePost(requestDto, newSeries);
+        return SellPostResponse.from(post);
+    }
+
+    // 삭제
+    @Transactional
+    public void deletePost(Long postId, Long userId) {
+        SellPost post = sellPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        validateWriter(post, userId);
+
+        if (post.getImageUrls() != null) {
+            for (String url : post.getImageUrls()) {
+                s3Service.deleteImage(url);
+            }
+        }
+
+        sellPostRepository.delete(post);
+    }
+
+    // 작성자 검증 로직
+    private void validateWriter(SellPost post, Long userId) {
+        if (!post.getUser().getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
     }
 
     private List<SimilarPostResponse> getSimilarPosts(SellPost currentPost) {

@@ -63,7 +63,7 @@ public class SellPost {
         this.title = dto.getTitle();
         this.content = dto.getDescription();
         this.price = dto.getPrice();
-        this.model = dto.getModelName();
+        this.model = dto.getModel();
         this.manufacturer = dto.getManufacturer();
         this.color = dto.getColor();
         this.capacity = dto.getCapacity();
@@ -81,6 +81,23 @@ public class SellPost {
 
     public static SellPost createPost(User user, SellPostRequest dto, String series) {
         return new SellPost(user, dto, series);
+    }
+
+    // 수정 메서드
+    public void updatePost(SellPostRequest dto, String newSeries) {
+        this.title = dto.getTitle();
+        this.manufacturer = dto.getManufacturer();
+        this.model = dto.getModel();
+        this.series = newSeries;
+        this.color = dto.getColor();
+        this.capacity = dto.getCapacity();
+        this.price = dto.getPrice();
+        this.content = dto.getDescription();
+        this.isUsed = dto.isUsed();
+        this.hasScratch = dto.isHasScratch();
+        this.isScreenCracked = dto.isScreenCracked();
+        this.batteryStatus = dto.getBatteryStatus();
+        this.imageUrls = dto.getImageUrls() != null ? dto.getImageUrls() : new ArrayList<>();
     }
 
     public void updateStatus(PostStatus status) {
