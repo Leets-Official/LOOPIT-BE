@@ -33,7 +33,7 @@ public class UserSellPostResponse {
         response.postId = post.getId();
         response.title = post.getTitle();
         // SellPost 엔티티에서의 이미지 관리가 post_images 테이블로 되어있어 임시로 No Image 처리. 추후 리펙토링 필요
-        response.imageUrl = post.getImageUrls().isEmpty() ? "No Image" : post.getImageUrls().get(0);
+        response.imageUrl = post.getThumbnail();
         response.price = post.getPrice();
         response.createdAt = post.getCreatedAt();
 
