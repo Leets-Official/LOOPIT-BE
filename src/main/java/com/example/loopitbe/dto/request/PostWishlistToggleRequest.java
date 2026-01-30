@@ -1,6 +1,6 @@
 package com.example.loopitbe.dto.request;
 
-public class WishlistToggleRequest {
+public class PostWishlistToggleRequest {
     private Long postId;
     private Long userId;
 
