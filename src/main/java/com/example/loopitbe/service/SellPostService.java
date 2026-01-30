@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.loopitbe.exception.CustomException;
 import com.example.loopitbe.exception.ErrorCode;
+import org.springframework.web.bind.annotation.RequestAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +41,8 @@ public class SellPostService {
     }
 
     @Transactional
-    public SellPostResponse createPost(String kakaoId, SellPostRequest requestDto) {
-        User user = userRepository.findByKakaoId(kakaoId)
+    public SellPostResponse createPost(Long userId, SellPostRequest requestDto) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 시리즈 정보 저장
