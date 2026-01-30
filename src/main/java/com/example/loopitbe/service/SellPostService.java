@@ -3,6 +3,8 @@ package com.example.loopitbe.service;
 import com.example.loopitbe.dto.request.SellPostSearchCondition;
 import com.example.loopitbe.dto.response.*;
 import com.example.loopitbe.dto.request.SellPostRequest;
+import com.example.loopitbe.dto.response.UserSellPostResponse;
+import com.example.loopitbe.dto.response.SimilarPostResponse;
 import com.example.loopitbe.entity.Device;
 import com.example.loopitbe.entity.SellPost;
 import com.example.loopitbe.entity.User;
@@ -10,6 +12,10 @@ import com.example.loopitbe.repository.DeviceRepository;
 import com.example.loopitbe.repository.SellPostRepository;
 import com.example.loopitbe.repository.SellPostSpecification;
 import com.example.loopitbe.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -50,6 +56,16 @@ public class SellPostService {
         return SellPostResponse.from(savedPost);
     }
 
+    public Page<UserSellPostResponse> getSellPostByUser(Long userId, int page) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+
+        Page<SellPost> posts = sellPostRepository.findAllByUser_UserId(userId, pageable);
+
+        return posts.map(UserSellPostResponse::from);
+    }
     // 목록 조회
     @Transactional(readOnly = true)
     public Page<SellPostListResponse> getSellPosts(int page, SellPostSearchCondition condition) {
