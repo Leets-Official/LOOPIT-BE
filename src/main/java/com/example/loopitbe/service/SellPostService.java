@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.loopitbe.exception.CustomException;
 import com.example.loopitbe.exception.ErrorCode;
-import org.springframework.web.bind.annotation.RequestAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +59,7 @@ public class SellPostService {
     // 목록 조회
     @Transactional(readOnly = true)
     public Page<SellPostListResponse> getSellPosts(int page, SellPostSearchCondition condition) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "updatedAt"));
         Specification<SellPost> spec = SellPostSpecification.search(condition);
 
         return sellPostRepository.findAll(spec, pageable)
@@ -91,7 +90,7 @@ public class SellPostService {
         validateWriter(post, userId);
 
         // 이미지 비교 및 삭제 로직
-        List<String> oldImages = post.getImageUrls();
+        List<String> oldImages = post.getImageUrlList();
         List<String> newImages = requestDto.getImageUrls() != null ? requestDto.getImageUrls() : new ArrayList<>();
 
         for (String oldUrl : oldImages) {
@@ -120,10 +119,9 @@ public class SellPostService {
 
         validateWriter(post, userId);
 
-        if (post.getImageUrls() != null) {
-            for (String url : post.getImageUrls()) {
-                s3Service.deleteImage(url);
-            }
+        List<String> imageUrls = post.getImageUrlList();
+        for (String url : imageUrls) {
+            s3Service.deleteImage(url);
         }
 
         sellPostRepository.delete(post);

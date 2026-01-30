@@ -6,15 +6,12 @@ import com.example.loopitbe.dto.request.SellPostSearchCondition;
 import com.example.loopitbe.dto.response.SellPostDetailResponse;
 import com.example.loopitbe.dto.response.SellPostListResponse;
 import com.example.loopitbe.dto.response.SellPostResponse;
-import com.example.loopitbe.enums.PriceRange;
 import com.example.loopitbe.service.SellPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/sell-post")

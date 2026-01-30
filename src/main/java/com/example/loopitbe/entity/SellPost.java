@@ -5,10 +5,12 @@ import com.example.loopitbe.enums.BatteryStatus;
 import com.example.loopitbe.enums.PostStatus;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "sell_posts")
@@ -42,13 +44,16 @@ public class SellPost {
     @Enumerated(EnumType.STRING)
     private BatteryStatus batteryStatus;
 
-    @ElementCollection
-    @CollectionTable(name = "post_images", joinColumns = @JoinColumn(name = "post_id"))
-    private List<String> imageUrls = new ArrayList<>();
+    @OneToMany(mappedBy = "sellPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
+    private List<PostImage> images = new ArrayList<>();
 
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -60,6 +65,7 @@ public class SellPost {
     protected SellPost() {}
 
     private SellPost(User user, SellPostRequest dto, String series) {
+        this.user = user;
         this.title = dto.getTitle();
         this.content = dto.getDescription();
         this.price = dto.getPrice();
@@ -71,10 +77,12 @@ public class SellPost {
         this.hasScratch = dto.isHasScratch();
         this.isScreenCracked = dto.isScreenCracked();
         this.batteryStatus = dto.getBatteryStatus();
-
-        this.status = PostStatus.SALE; // 초기값 설정
-        this.imageUrls = dto.getImageUrls() != null ? dto.getImageUrls() : new ArrayList<>();
-
+        this.status = PostStatus.SALE;
+        if (dto.getImageUrls() != null) {
+            for (int i = 0; i < dto.getImageUrls().size(); i++) {
+                this.images.add(new PostImage(dto.getImageUrls().get(i), i, this));
+            }
+        }
         // 시리즈 정보 저장
         this.series = series;
     }
@@ -97,17 +105,33 @@ public class SellPost {
         this.hasScratch = dto.isHasScratch();
         this.isScreenCracked = dto.isScreenCracked();
         this.batteryStatus = dto.getBatteryStatus();
-        this.imageUrls = dto.getImageUrls() != null ? dto.getImageUrls() : new ArrayList<>();
+        this.images.clear();
+        if (dto.getImageUrls() != null) {
+            for (int i = 0; i < dto.getImageUrls().size(); i++) {
+                this.images.add(new PostImage(dto.getImageUrls().get(i), i, this));
+            }
+        }
     }
 
     public void updateStatus(PostStatus status) {
         this.status = status;
     }
 
+    public List<String> getImageUrlList() {
+        return this.images.stream()
+                .map(PostImage::getImageUrl)
+                .collect(Collectors.toList());
+    }
+
+    public String getThumbnail() {
+        return (this.images != null && !this.images.isEmpty()) ? this.images.get(0).getImageUrl() : null;
+    }
+
     public Long getId() { return id; }
     public User getUser() { return user; }
     public String getTitle() { return title; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
     public String getContent() { return content; }
     public Long getPrice() { return price; }
     public String getModel() { return model; }
@@ -119,9 +143,6 @@ public class SellPost {
     public boolean isHasScratch() { return hasScratch; }
     public boolean isScreenCracked() { return isScreenCracked; }
     public BatteryStatus getBatteryStatus() { return batteryStatus; }
-    public List<String> getImageUrls() { return imageUrls; }
-    public String getThumbnail() {
-        return (imageUrls != null && !imageUrls.isEmpty()) ? imageUrls.get(0) : null;
-    }
     public String getSeries() { return series; }
+    public List<PostImage> getImages() { return images; }
 }

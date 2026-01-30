@@ -38,9 +38,6 @@ public class ChatRoomListResponse {
         boolean isBuyer = room.getBuyer().getUserId().equals(myUserId);
         User partner = isBuyer ? room.getSeller() : room.getBuyer();
 
-        String thumbnail = (room.getSellPost().getImageUrls() != null && !room.getSellPost().getImageUrls().isEmpty())
-                ? room.getSellPost().getImageUrls().get(0) : null;
-
         return new ChatRoomListResponse(
                 room.getId(),
                 partner.getUserId(),
@@ -48,7 +45,7 @@ public class ChatRoomListResponse {
                 partner.getProfileImage(),
                 room.getLastMessage(),
                 room.getLastMessageAt(),
-                thumbnail,
+                room.getSellPost().getThumbnail(),
                 hasUnreadMessages
         );
     }

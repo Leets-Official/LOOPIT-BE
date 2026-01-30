@@ -11,31 +11,31 @@ public class SellPostListResponse {
     private String model;
     private String thumbnail;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private String status;
 
     public SellPostListResponse() {}
 
-    public SellPostListResponse(Long id, String title, Long price, String model, String thumbnail, LocalDateTime createdAt, String status) {
+    public SellPostListResponse(Long id, String title, Long price, String model, String thumbnail, LocalDateTime createdAt, LocalDateTime updatedAt, String status) {
         this.id = id;
         this.title = title;
         this.price = price;
         this.model = model;
         this.thumbnail = thumbnail;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.status = status;
     }
 
     public static SellPostListResponse from(SellPost post) {
-        String thumbnail = (post.getImageUrls() != null && !post.getImageUrls().isEmpty())
-                ? post.getImageUrls().get(0) : null;
-
         return new SellPostListResponse(
                 post.getId(),
                 post.getTitle(),
                 post.getPrice(),
                 post.getModel(),
-                thumbnail,
+                post.getThumbnail(),
                 post.getCreatedAt(),
+                post.getUpdatedAt(),
                 post.getStatus().getDescription()
         );
     }
@@ -47,5 +47,6 @@ public class SellPostListResponse {
     public String getModel() { return model; }
     public String getThumbnail() { return thumbnail; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
     public String getStatus() { return status; }
 }
