@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.loopitbe.exception.CustomException;
 import com.example.loopitbe.exception.ErrorCode;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,20 +35,22 @@ public class SellPostService {
     private final SellPostRepository sellPostRepository;
     private final UserRepository userRepository;
     private final DeviceRepository deviceRepository;
+    private final S3Service s3Service;
 
-    public SellPostService(SellPostRepository sellPostRepository, UserRepository userRepository, DeviceRepository deviceRepository) {
+    public SellPostService(SellPostRepository sellPostRepository, UserRepository userRepository, DeviceRepository deviceRepository, S3Service s3Service) {
         this.sellPostRepository = sellPostRepository;
         this.userRepository = userRepository;
         this.deviceRepository = deviceRepository;
+        this.s3Service = s3Service;
     }
 
     @Transactional
-    public SellPostResponse createPost(String kakaoId, SellPostRequest requestDto) {
-        User user = userRepository.findByKakaoId(kakaoId)
+    public SellPostResponse createPost(Long userId, SellPostRequest requestDto) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 시리즈 정보 저장
-        Device device = deviceRepository.findByModel(requestDto.getModelName())
+        Device device = deviceRepository.findByModel(requestDto.getModel())
                 .orElseThrow(() -> new CustomException(ErrorCode.DEVICE_NOT_FOUND));
 
         String series = device.getSeries();
@@ -71,7 +74,7 @@ public class SellPostService {
     // 목록 조회
     @Transactional(readOnly = true)
     public Page<SellPostListResponse> getSellPosts(int page, SellPostSearchCondition condition) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "updatedAt"));
         Specification<SellPost> spec = SellPostSpecification.search(condition);
 
         return sellPostRepository.findAll(spec, pageable)
@@ -90,6 +93,60 @@ public class SellPostService {
 
         // 3. DTO 변환 및 반환
         return new SellPostDetailResponse(post, similarPostResponses);
+    }
+
+    // 수정
+    @Transactional
+    public SellPostResponse updatePost(Long postId, Long userId, SellPostRequest requestDto) {
+        SellPost post = sellPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        // 본인 확인
+        validateWriter(post, userId);
+
+        // 이미지 비교 및 삭제 로직
+        List<String> oldImages = post.getImageUrlList();
+        List<String> newImages = requestDto.getImageUrls() != null ? requestDto.getImageUrls() : new ArrayList<>();
+
+        for (String oldUrl : oldImages) {
+            if (!newImages.contains(oldUrl)) {
+                s3Service.deleteImage(oldUrl);
+            }
+        }
+
+        // 시리즈 정보 업데이트
+        String newSeries = post.getSeries();
+        if (!post.getModel().equals(requestDto.getModel())) {
+            Device device = deviceRepository.findByModel(requestDto.getModel())
+                    .orElseThrow(() -> new CustomException(ErrorCode.DEVICE_NOT_FOUND));
+            newSeries = device.getSeries();
+        }
+
+        post.updatePost(requestDto, newSeries);
+        return SellPostResponse.from(post);
+    }
+
+    // 삭제
+    @Transactional
+    public void deletePost(Long postId, Long userId) {
+        SellPost post = sellPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        validateWriter(post, userId);
+
+        List<String> imageUrls = post.getImageUrlList();
+        for (String url : imageUrls) {
+            s3Service.deleteImage(url);
+        }
+
+        sellPostRepository.delete(post);
+    }
+
+    // 작성자 검증 로직
+    private void validateWriter(SellPost post, Long userId) {
+        if (!post.getUser().getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
     }
 
     private List<SimilarPostResponse> getSimilarPosts(SellPost currentPost) {

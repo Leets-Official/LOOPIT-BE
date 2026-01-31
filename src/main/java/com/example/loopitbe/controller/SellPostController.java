@@ -26,16 +26,21 @@ public class SellPostController {
         this.sellPostService = sellPostService;
     }
 
+    // 판매글 등록
+    @Operation(
+            summary = "판매글 등록",
+            description = "판매글 등록 후 기본 정보 return"
+    )
     @PostMapping
     public ResponseEntity<ApiResponse<SellPostResponse>> createSellPost(
             @RequestBody SellPostRequest requestDto,
-            Principal principal) {
+            @RequestAttribute Long userId) {
 
-        SellPostResponse responseData = sellPostService.createPost(principal.getName(), requestDto);
+        SellPostResponse response = sellPostService.createPost(userId, requestDto);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.ok(responseData, "판매글이 성공적으로 등록되었습니다."));
+                .body(ApiResponse.ok(response, "판매글 등록 성공."));
     }
 
     @Operation(
@@ -58,9 +63,9 @@ public class SellPostController {
             @RequestParam(defaultValue = "0") int page,
             @ModelAttribute SellPostSearchCondition condition
     ) {
-        Page<SellPostListResponse> result = sellPostService.getSellPosts(page, condition);
+        Page<SellPostListResponse> response = sellPostService.getSellPosts(page, condition);
 
-        return ResponseEntity.ok(ApiResponse.ok(result, "판매글 목록 조회 성공."));
+        return ResponseEntity.ok(ApiResponse.ok(response, "판매글 목록 조회 성공."));
     }
 
     // 판매글 상세 조회
@@ -77,4 +82,24 @@ public class SellPostController {
         return ResponseEntity.ok(ApiResponse.ok(response, "판매글 상세 조회 성공."));
     }
 
+    @Operation(summary = "판매글 수정", description = "기존 판매글의 내용을 수정. 삭제된 이미지는 S3에서도 제거.")
+    @PutMapping("/{postId}")
+    public ResponseEntity<ApiResponse<SellPostResponse>> updateSellPost(
+            @PathVariable Long postId,
+            @RequestBody SellPostRequest requestDto,
+            @RequestAttribute Long userId
+    ) {
+        SellPostResponse response = sellPostService.updatePost(postId, userId, requestDto);
+        return ResponseEntity.ok(ApiResponse.ok(response, "판매글 수정 성공."));
+    }
+
+    @Operation(summary = "판매글 삭제", description = "판매글을 삭제하며, S3에 저장된 이미지도 함께 삭제.")
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<ApiResponse<Void>> deleteSellPost(
+            @PathVariable Long postId,
+            @RequestAttribute Long userId
+    ) {
+        sellPostService.deletePost(postId, userId);
+        return ResponseEntity.ok(ApiResponse.ok(null, "판매글 삭제 성공."));
+    }
 }

@@ -14,6 +14,7 @@ public enum ErrorCode {
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 리프레시 토큰입니다."),
     UNSUPPORTED_JWT(HttpStatus.UNAUTHORIZED, "지원되지 않는 JWT 토큰입니다."),
     EMPTY_JWT(HttpStatus.UNAUTHORIZED, "JWT 토큰이 비어있거나 잘못되었습니다."),
+    UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "허용되지 않은 접근입니다."),
     REDIS_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 메시지 파싱 중 오류가 발생했습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     SELL_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "판매 게시글을 찾을 수 없습니다."),
@@ -24,7 +25,6 @@ public enum ErrorCode {
     DEVICE_NOT_FOUND(HttpStatus.NOT_FOUND, "기기를 찾을 수 없습니다."),
     IMAGE_COUNT_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 이미지 업로드 개수를 초과했습니다."),
     IMAGE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 삭제에 실패했습니다.");
-
 
     private final HttpStatus status;
     private final String message;

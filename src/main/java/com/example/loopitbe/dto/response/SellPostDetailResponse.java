@@ -18,6 +18,7 @@ public class SellPostDetailResponse {
     private String content;
     private String capacity;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     // 기기 상태 정보
     private boolean isUsed;
@@ -37,7 +38,7 @@ public class SellPostDetailResponse {
         User seller = post.getUser();
 
         this.id = post.getId();
-        this.imageUrls = post.getImageUrls();
+        this.imageUrls = post.getImageUrlList();
         this.title = post.getTitle();
         this.price = post.getPrice();
         this.manufacturer = post.getManufacturer();
@@ -46,6 +47,7 @@ public class SellPostDetailResponse {
         this.content = post.getContent();
         this.capacity = post.getCapacity();
         this.createdAt = post.getCreatedAt();
+        this.updatedAt = post.getUpdatedAt();
 
         this.isUsed = post.isUsed();
         this.hasScratch = post.isHasScratch();
@@ -70,6 +72,7 @@ public class SellPostDetailResponse {
     public String getContent() { return content; }
     public String getCapacity() { return capacity; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
     public boolean isUsed() { return isUsed; }
     public boolean isHasScratch() { return hasScratch; }
     public boolean isScreenCracked() { return isScreenCracked; }
