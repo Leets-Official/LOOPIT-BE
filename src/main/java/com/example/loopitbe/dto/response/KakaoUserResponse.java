@@ -2,6 +2,7 @@ package com.example.loopitbe.dto.response;
 
 import com.example.loopitbe.entity.User;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class KakaoUserResponse {
@@ -9,6 +10,7 @@ public class KakaoUserResponse {
     private String kakaoId;
     private String name;
     private String email;
+    private LocalDate birthdate;
     private String profileImage;
     private LocalDateTime createdAt;
 
@@ -19,6 +21,7 @@ public class KakaoUserResponse {
         dto.kakaoId = user.getKakaoId();
         dto.name = user.getName();
         dto.email = user.getEmail();
+        dto.birthdate = user.getBirthdate();
         dto.profileImage = user.getProfileImage();
         dto.createdAt = user.getCreatedAt();
 
@@ -48,4 +51,6 @@ public class KakaoUserResponse {
     public String getProfileImage() {
         return profileImage;
     }
+
+    public LocalDate getBirthdate() { return birthdate; }
 }
