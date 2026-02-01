@@ -21,10 +21,13 @@ public enum ErrorCode {
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다."),
     GEMINI_REQUEST_ERROR(HttpStatus.BAD_GATEWAY, "제미나이 API와의 연결에서 에러가 발생했습니다."),
     GEMINI_INVALID_RESPONSE(HttpStatus.BAD_GATEWAY, "외부 견적 서비스 응답 처리 중 오류가 발생했습니다."),
-    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않거나 삭제된 게시글입니다."),
     DEVICE_NOT_FOUND(HttpStatus.NOT_FOUND, "기기를 찾을 수 없습니다."),
     IMAGE_COUNT_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 이미지 업로드 개수를 초과했습니다."),
-    IMAGE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 삭제에 실패했습니다.");
+    IMAGE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 삭제에 실패했습니다."),
+    INVALID_STATUS_VALUE(HttpStatus.BAD_REQUEST, "잘못된 거래내역 조회 상태값입니다."),
+    TRANSACTION_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "해당 판매글에 대해 진행 중이거나 완료된 거래가 이미 존재합니다."),
+    ONGOING_TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "현재 진행 중인 거래가 존재하지 않습니다.");
 
     private final HttpStatus status;
     private final String message;

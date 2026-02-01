@@ -1,6 +1,7 @@
 package com.example.loopitbe.entity;
 
 import com.example.loopitbe.enums.PostStatus;
+import com.example.loopitbe.enums.TransactionStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -14,7 +15,7 @@ public class Transaction {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private SellPost post;
+    private SellPost sellPost;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id")
@@ -24,33 +25,40 @@ public class Transaction {
     @JoinColumn(name = "seller_id")
     private User seller;
 
-    // 통합된 PostStatus 사용
+    // RESERVED(예약중), COMPLETED(거래완료), CANCELED(취소됨)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PostStatus status;
+    private TransactionStatus status;
 
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     protected Transaction() {}
 
-    public Transaction(SellPost post, User buyer, User seller, PostStatus status) {
-        this.post = post;
-        this.buyer = buyer;
-        this.seller = seller;
-        this.status = status;
+    public static Transaction createTransaction(SellPost post, User buyer, User seller) {
+        Transaction tr = new Transaction();
+
+        tr.sellPost = post;
+        tr.buyer = buyer;
+        tr.seller = seller;
+        tr.status = TransactionStatus.RESERVED;
+        tr.createdAt = LocalDateTime.now();
+
+        return tr;
     }
 
     // 상태 업데이트 메서드
-    public void updateStatus(PostStatus status) {
+    public void updateStatus(TransactionStatus status) {
         this.status = status;
+        this.updatedAt = LocalDateTime.now();
     }
 
     // Getter들
     public Long getId() { return id; }
-    public SellPost getPost() { return post; }
+    public SellPost getSellPost() { return sellPost; }
     public User getBuyer() { return buyer; }
     public User getSeller() { return seller; }
-    public PostStatus getStatus() { return status; }
+    public TransactionStatus getStatus() { return status; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 
     @PrePersist

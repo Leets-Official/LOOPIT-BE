@@ -2,6 +2,7 @@ package com.example.loopitbe.controller;
 
 import com.example.loopitbe.common.ApiResponse;
 import com.example.loopitbe.dto.request.KakaoUserCreateRequest;
+import com.example.loopitbe.dto.request.UserImgUpdateRequest;
 import com.example.loopitbe.dto.request.UserUpdateRequest;
 import com.example.loopitbe.dto.response.KakaoUserResponse;
 import com.example.loopitbe.service.UserService;
@@ -53,5 +54,13 @@ public class UserController {
             @Valid @RequestBody UserUpdateRequest request
     ) {
         return ResponseEntity.ok(ApiResponse.ok(service.updateUser(userId, request), "사용자 정보 업데이트 완료."));
+    }
+
+    @PutMapping("/image/{userId}")
+    public ResponseEntity<ApiResponse<KakaoUserResponse>> updateUserProfileImg(
+            @PathVariable Long userId,
+            @Valid @RequestBody UserImgUpdateRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(service.updateUserProfileImg(userId, request.getImgUrl()), "사용자 프로필 이미지 업데이트 완료."));
     }
 }

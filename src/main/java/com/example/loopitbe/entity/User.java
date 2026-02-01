@@ -70,13 +70,6 @@ public class User {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void updateUser(ProfileUpdateRequest dto) {
-        this.nickname = dto.getNickname();
-        this.email = dto.getEmail();
-        this.birthdate = dto.getBirthdate();
-        this.updatedAt = LocalDateTime.now();
-    }
-
     public void updateProfileImage(String newProfileImage) {
         this.profileImage = newProfileImage;
         this.updatedAt = java.time.LocalDateTime.now(); // 수정 시 업데이트 시간 갱신

@@ -7,8 +7,10 @@ import jakarta.persistence.*;
 public class PostImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "image_id")
     private Long id;
 
+    @Column(name = "image_url")
     private String imageUrl;
 
     private int sortOrder;

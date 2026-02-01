@@ -1,13 +1,13 @@
 package com.example.loopitbe.controller;
 
 import com.example.loopitbe.common.ApiResponse;
+import com.example.loopitbe.dto.request.CompleteTransactionRequest;
+import com.example.loopitbe.dto.request.CreateTransactionRequest;
 import com.example.loopitbe.dto.request.SellPostRequest;
 import com.example.loopitbe.dto.request.SellPostSearchCondition;
-import com.example.loopitbe.dto.response.SellPostDetailResponse;
-import com.example.loopitbe.dto.response.SellPostListResponse;
-import com.example.loopitbe.dto.response.SellPostResponse;
-import com.example.loopitbe.dto.response.UserSellPostResponse;
+import com.example.loopitbe.dto.response.*;
 import com.example.loopitbe.service.SellPostService;
+import com.example.loopitbe.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -21,9 +21,11 @@ import java.security.Principal;
 public class SellPostController {
 
     private final SellPostService sellPostService;
+    private final TransactionService transactionService;
 
-    public SellPostController(SellPostService sellPostService) {
+    public SellPostController(SellPostService sellPostService, TransactionService transactionService) {
         this.sellPostService = sellPostService;
+        this.transactionService = transactionService;
     }
 
     // 판매글 등록
@@ -101,5 +103,31 @@ public class SellPostController {
     ) {
         sellPostService.deletePost(postId, userId);
         return ResponseEntity.ok(ApiResponse.ok(null, "판매글 삭제 성공."));
+    }
+
+    // 판매 상품 예약하기
+    @Operation(
+            summary = "판매 상품 예약하기",
+            description = "판매 상품 예약. SellPost, Transaction의 status 필드를 예약중으로 변경. 이미 진행중 혹은 완료된 거래 존재 시 에러"
+    )
+    @PostMapping("/reserve")
+    public ResponseEntity<ApiResponse<TransactionHistoryResponse>> createTransaction(@RequestBody CreateTransactionRequest request) {
+
+        TransactionHistoryResponse response = transactionService.createTransaction(request);
+
+        return ResponseEntity.ok(ApiResponse.ok(response, "판매 상품 예약 성공."));
+    }
+
+    // 판매글 등록
+    @Operation(
+            summary = "판매 상품 거래 완료",
+            description = "판매 상품 거래 완료하기. SellPost, Transaction의 status 필드를 거래완료로 변경. 이미 진행중 거래 존재하지 안을 시 에러"
+    )
+    @PostMapping("/complete")
+    public ResponseEntity<ApiResponse<TransactionHistoryResponse>> completeTransaction(@RequestBody CompleteTransactionRequest request) {
+
+        TransactionHistoryResponse response = transactionService.completeTransaction(request);
+
+        return ResponseEntity.ok(ApiResponse.ok(response, "판매 상품 거래 완료."));
     }
 }
