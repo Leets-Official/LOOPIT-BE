@@ -48,6 +48,10 @@ public class SellPost {
     @OrderBy("sortOrder ASC")
     private List<PostImage> images = new ArrayList<>();
 
+    // 판매글 삭제 시 판매글에 해당하는 transaction도 같이 삭제
+    @OneToMany(mappedBy = "sellPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -115,6 +119,7 @@ public class SellPost {
 
     public void updateStatus(PostStatus status) {
         this.status = status;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public List<String> getImageUrlList() {
@@ -125,6 +130,10 @@ public class SellPost {
 
     public String getThumbnail() {
         return (this.images != null && !this.images.isEmpty()) ? this.images.get(0).getImageUrl() : null;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
     }
 
     public Long getId() { return id; }

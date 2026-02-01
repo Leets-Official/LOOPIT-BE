@@ -42,6 +42,9 @@ public class SellPostService {
         this.s3Service = s3Service;
     }
 
+    /**
+     * 중고 판매 게시글 생성
+     */
     @Transactional
     public SellPostResponse createPost(Long userId, SellPostRequest requestDto) {
         User user = userRepository.findById(userId)

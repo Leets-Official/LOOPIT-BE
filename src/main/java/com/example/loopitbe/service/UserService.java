@@ -16,9 +16,11 @@ import javax.xml.stream.events.DTD;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final S3Service s3Service;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, S3Service s3Service) {
         this.userRepository = userRepository;
+        this.s3Service = s3Service;
     }
 
     public KakaoUserResponse createKakaoUser(KakaoUserCreateRequest dto) {
@@ -55,6 +57,23 @@ public class UserService {
             throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
 
         user.updateUser(dto);
+
+        return KakaoUserResponse.toDTO(user);
+    }
+
+    @Transactional
+    public KakaoUserResponse updateUserProfileImg(Long userId, String imgUrl) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 요청 이미지경로 null 혹은 공백이면 이미지 삭제
+        if (imgUrl == null || imgUrl.isEmpty()){
+            s3Service.deleteImage(imgUrl);
+            user.updateProfileImage(null);  // db에 null값 삽입
+        }
+        else{
+            user.updateProfileImage(imgUrl);
+        }
 
         return KakaoUserResponse.toDTO(user);
     }
