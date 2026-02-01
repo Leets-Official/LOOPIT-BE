@@ -1,9 +1,7 @@
 package com.example.loopitbe.service;
 
 import com.example.loopitbe.dto.request.SellPostSearchCondition;
-import com.example.loopitbe.dto.response.SellPostDetailResponse;
-import com.example.loopitbe.dto.response.SellPostListResponse;
-import com.example.loopitbe.dto.response.SellPostResponse;
+import com.example.loopitbe.dto.response.*;
 import com.example.loopitbe.dto.request.SellPostRequest;
 import com.example.loopitbe.dto.response.UserSellPostResponse;
 import com.example.loopitbe.dto.response.SimilarPostResponse;

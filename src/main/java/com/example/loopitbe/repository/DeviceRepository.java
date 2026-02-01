@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface DeviceRepository extends JpaRepository<Device, Long> {
     List<Device> findTop10ByModelContainingOrderByModelIdAsc(String keyword);
+    List<Device> findTop5ByModelContainingOrderByModelIdAsc(String keyword);
 
     // 모델명으로 기기 정보 조회 (시리즈 찾기용)
     Optional<Device> findByModel(String model);

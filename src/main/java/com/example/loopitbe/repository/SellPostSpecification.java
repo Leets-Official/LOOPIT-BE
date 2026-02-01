@@ -44,6 +44,18 @@ public class SellPostSpecification {
                 predicates.add(root.get("model").in(subquery));
             }
 
+            // 5. 키워드 필터링
+            // null 체크, 빈 문자열(""), 공백 문자(" ")를 모두 체크합니다.
+            if (condition.getKeyword() != null && !condition.getKeyword().trim().isEmpty()) {
+                String pattern = "%" + condition.getKeyword().trim() + "%";
+
+                // 제목 혹은 모델명에 LIKE %keyword% << 이런식으로 적용
+                Predicate titleLike = cb.like(root.get("title"), pattern);
+                Predicate modelLike = cb.like(root.get("model"), pattern);
+
+                predicates.add(cb.or(titleLike, modelLike));
+            }
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
