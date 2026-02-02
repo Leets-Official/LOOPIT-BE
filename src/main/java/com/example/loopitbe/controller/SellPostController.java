@@ -1,10 +1,7 @@
 package com.example.loopitbe.controller;
 
 import com.example.loopitbe.common.ApiResponse;
-import com.example.loopitbe.dto.request.CompleteTransactionRequest;
-import com.example.loopitbe.dto.request.CreateTransactionRequest;
-import com.example.loopitbe.dto.request.SellPostRequest;
-import com.example.loopitbe.dto.request.SellPostSearchCondition;
+import com.example.loopitbe.dto.request.*;
 import com.example.loopitbe.dto.response.*;
 import com.example.loopitbe.service.SellPostService;
 import com.example.loopitbe.service.TransactionService;
@@ -121,12 +118,25 @@ public class SellPostController {
     // 판매글 등록
     @Operation(
             summary = "판매 상품 거래 완료",
-            description = "판매 상품 거래 완료하기. SellPost, Transaction의 status 필드를 거래완료로 변경. 이미 진행중 거래 존재하지 안을 시 에러"
+            description = "판매 상품 거래 완료하기. SellPost, Transaction의 status 필드를 거래완료로 변경. 예약 중인 거래 없을 시 에러"
     )
     @PostMapping("/complete")
     public ResponseEntity<ApiResponse<TransactionHistoryResponse>> completeTransaction(@RequestBody CompleteTransactionRequest request) {
 
         TransactionHistoryResponse response = transactionService.completeTransaction(request);
+
+        return ResponseEntity.ok(ApiResponse.ok(response, "판매 상품 거래 완료."));
+    }
+
+    // 판매글 등록
+    @Operation(
+            summary = "판매 상품 다시 판매중으로 설정",
+            description = "예약중인 판매 상품을 다시 판매중으로 설정. SellPost, Transaction의 status 필드를 취소됨으로 변경. 예약 중인 거래 없을 시 에러"
+    )
+    @PostMapping("/active")
+    public ResponseEntity<ApiResponse<TransactionHistoryResponse>> cancelTransaction(@RequestBody CancelTransactionRequest request) {
+
+        TransactionHistoryResponse response = transactionService.cancelTransaction(request);
 
         return ResponseEntity.ok(ApiResponse.ok(response, "판매 상품 거래 완료."));
     }
