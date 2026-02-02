@@ -138,6 +138,6 @@ public class SellPostController {
 
         TransactionHistoryResponse response = transactionService.cancelTransaction(request);
 
-        return ResponseEntity.ok(ApiResponse.ok(response, "판매 상품 거래 완료."));
+        return ResponseEntity.ok(ApiResponse.ok(response, "판매 상품 판매중으로 변경 완료."));
     }
 }
