@@ -30,7 +30,7 @@ public class ChatMessage {
     @Column(columnDefinition = "TEXT")
     private String content; // TEXT 타입일 때만 내용 존재
 
-    @OneToOne(mappedBy = "message", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "message", cascade = CascadeType.ALL)
     private ChatImage chatImage;
 
     @Column(name = "is_read", nullable = false)

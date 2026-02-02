@@ -13,7 +13,7 @@ public class ChatRoomListResponse {
     private String partnerProfileImage;
     private String lastMessage;
     private LocalDateTime lastMessageAt;
-    private String postImage;
+    private String thumbnail;
 
     // 안읽은 메시지 존재 여부
     private boolean hasUnreadMessages;
@@ -22,7 +22,7 @@ public class ChatRoomListResponse {
 
     public ChatRoomListResponse(
             Long roomId, Long partnerId, String partnerNickname, String partnerProfileImage,
-            String lastMessage, LocalDateTime lastMessageAt, String postImage,
+            String lastMessage, LocalDateTime lastMessageAt, String thumbnail,
             boolean hasUnreadMessages) {
         this.roomId = roomId;
         this.partnerId = partnerId;
@@ -30,7 +30,7 @@ public class ChatRoomListResponse {
         this.partnerProfileImage = partnerProfileImage;
         this.lastMessage = lastMessage;
         this.lastMessageAt = lastMessageAt;
-        this.postImage = postImage;
+        this.thumbnail = thumbnail;
         this.hasUnreadMessages = hasUnreadMessages;
     }
 
@@ -57,6 +57,6 @@ public class ChatRoomListResponse {
     public String getPartnerProfileImage() { return partnerProfileImage; }
     public String getLastMessage() { return lastMessage; }
     public LocalDateTime getLastMessageAt() { return lastMessageAt; }
-    public String getPostImage() { return postImage; }
+    public String getThumbnail() { return thumbnail; }
     public boolean isHasUnreadMessages() { return hasUnreadMessages; }
 }

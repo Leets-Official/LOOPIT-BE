@@ -17,4 +17,9 @@ public class SellPostResponse{
 
         return response;
     }
+
+    // Getters
+    public Long getId() { return id; }
+    public String getTitle() { return title; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 }
