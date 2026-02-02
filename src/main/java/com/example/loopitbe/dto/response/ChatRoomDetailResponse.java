@@ -12,13 +12,15 @@ public class ChatRoomDetailResponse {
     private String postTitle;
     private Long postPrice;
     private LocalDateTime postCreatedAt;
-    // 추후 이미지 필드 추가
+    private String thumbnail;
+    private String postStatus; // description
 
     public ChatRoomDetailResponse() {}
 
     public ChatRoomDetailResponse(
             Long roomId, Long sellerId, Long buyerId,
-            Long sellPostId, String postTitle, Long postPrice, LocalDateTime postCreatedAt
+            Long sellPostId, String postTitle, Long postPrice, LocalDateTime postCreatedAt,
+            String thumbnail, String postStatus
     ) {
         this.roomId = roomId;
         this.sellerId = sellerId;
@@ -27,6 +29,8 @@ public class ChatRoomDetailResponse {
         this.postTitle = postTitle;
         this.postPrice = postPrice;
         this.postCreatedAt = postCreatedAt;
+        this.thumbnail = thumbnail;
+        this.postStatus = postStatus;
     }
 
     public static ChatRoomDetailResponse from(ChatRoom room) {
@@ -37,7 +41,9 @@ public class ChatRoomDetailResponse {
                 room.getSellPost().getId(),
                 room.getSellPost().getTitle(),
                 room.getSellPost().getPrice(),
-                room.getCreatedAt()
+                room.getCreatedAt(),
+                room.getSellPost().getThumbnail(),
+                room.getSellPost().getStatus().getDescription()
         );
     }
 
@@ -48,4 +54,6 @@ public class ChatRoomDetailResponse {
     public String getPostTitle() { return postTitle; }
     public Long getPostPrice() { return postPrice; }
     public LocalDateTime getPostCreatedAt() { return postCreatedAt; }
+    public String getThumbnail() { return thumbnail; }
+    public String getPostStatus() { return postStatus; }
 }
