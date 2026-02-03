@@ -94,8 +94,11 @@ public class SecurityConfig {
         // 허용할 HTTP 메서드
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 
-        // 허용할 헤더
+        // 클라이언트가 서버로 보낼 때 허용할 헤더
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control"));
+
+        // 클라이언트가 응답에서 읽을 수 있게 허용할 헤더
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
 
         // 내 서비스에서 쿠키나 인증 헤더를 허용할지 여부
         configuration.setAllowCredentials(true);
