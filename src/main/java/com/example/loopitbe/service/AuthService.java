@@ -48,13 +48,13 @@ public class AuthService {
 
         // 미가입자 → JWT 발급 X
         if (user == null) {
-            return new KakaoLoginResponse(kakaoId, false);
+            return new KakaoLoginResponse(null, kakaoId, false);
         }
 
         // 가입자 → JWT 발급
         issueJwt(user, response);
 
-        return new KakaoLoginResponse(kakaoId, true);
+        return new KakaoLoginResponse(user.getUserId(), kakaoId, true);
     }
 
     // jwt 발급 메서드
