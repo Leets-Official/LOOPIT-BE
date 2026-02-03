@@ -52,6 +52,14 @@ public class SellPost {
     @OneToMany(mappedBy = "sellPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions = new ArrayList<>();
 
+    // 판매글 삭제 시 해당하는 wishList도 같이 삭제
+    @OneToMany(mappedBy = "sellPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostWishList> wishLists = new ArrayList<>();
+
+    // 판매글 삭제 시 채팅방은 사라지지 않음.
+    @OneToMany(mappedBy = "sellPost")
+    private List<ChatRoom> chatRooms = new ArrayList<>();
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -135,6 +143,8 @@ public class SellPost {
     public List<Transaction> getTransactions() {
         return transactions;
     }
+    public List<PostWishList> getWishLists() { return wishLists; }
+    public List<ChatRoom> getChatRooms() { return chatRooms; }
 
     public Long getId() { return id; }
     public User getUser() { return user; }

@@ -1,6 +1,7 @@
 package com.example.loopitbe.dto.response;
 
 import com.example.loopitbe.entity.ChatRoom;
+import com.example.loopitbe.entity.SellPost;
 import com.example.loopitbe.entity.User;
 
 import java.time.LocalDateTime;
@@ -37,6 +38,9 @@ public class ChatRoomListResponse {
     public static ChatRoomListResponse from(ChatRoom room, Long myUserId, boolean hasUnreadMessages) {
         boolean isBuyer = room.getBuyer().getUserId().equals(myUserId);
         User partner = isBuyer ? room.getSeller() : room.getBuyer();
+
+        SellPost post = room.getSellPost();
+        String thumbnail = (post != null) ? post.getThumbnail() : null;
 
         return new ChatRoomListResponse(
                 room.getId(),
