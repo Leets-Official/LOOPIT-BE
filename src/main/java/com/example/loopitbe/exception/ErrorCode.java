@@ -27,7 +27,8 @@ public enum ErrorCode {
     IMAGE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 삭제에 실패했습니다."),
     INVALID_STATUS_VALUE(HttpStatus.BAD_REQUEST, "잘못된 거래내역 조회 상태값입니다."),
     TRANSACTION_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "해당 판매글에 대해 진행 중이거나 완료된 거래가 이미 존재합니다."),
-    ONGOING_TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "현재 진행 중인 거래가 존재하지 않습니다.");
+    ONGOING_TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "현재 진행 중인 거래가 존재하지 않습니다."),
+    POST_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이미 삭제된 게시글입니다.");
 
     private final HttpStatus status;
     private final String message;

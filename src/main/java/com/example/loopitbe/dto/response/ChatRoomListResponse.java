@@ -49,7 +49,7 @@ public class ChatRoomListResponse {
                 partner.getProfileImage(),
                 room.getLastMessage(),
                 room.getLastMessageAt(),
-                room.getSellPost().getThumbnail(),
+                thumbnail,
                 hasUnreadMessages
         );
     }

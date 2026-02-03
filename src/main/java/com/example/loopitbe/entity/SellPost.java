@@ -74,6 +74,9 @@ public class SellPost {
     @Column(nullable = false)
     private String series;
 
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
+
     protected SellPost() {}
 
     private SellPost(User user, SellPostRequest dto, String series) {
@@ -130,6 +133,11 @@ public class SellPost {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void markAsDeleted() {
+        this.isDeleted = true;
+        this.updatedAt = LocalDateTime.now();
+    }
+
     public List<String> getImageUrlList() {
         return this.images.stream()
                 .map(PostImage::getImageUrl)
@@ -164,4 +172,5 @@ public class SellPost {
     public BatteryStatus getBatteryStatus() { return batteryStatus; }
     public String getSeries() { return series; }
     public List<PostImage> getImages() { return images; }
+    public boolean isDeleted() { return isDeleted; }
 }

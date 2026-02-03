@@ -38,33 +38,22 @@ public class ChatRoomDetailResponse {
 
     public static ChatRoomDetailResponse from(ChatRoom room) {
         SellPost post = room.getSellPost();
-        // 판매글이 삭제된 경우(null) 처리
-        if (post == null) {
-            return new ChatRoomDetailResponse(
-                    room.getId(),
-                    room.getSeller().getUserId(),
-                    room.getBuyer().getUserId(),
-                    null,           // sellPostId
-                    "삭제된 판매글입니다.", // postTitle
-                    0L,             // postPrice
-                    null,           // postCreatedAt
-                    null,           // postUpdatedAt
-                    null,           // thumbnail
-                    "삭제됨"         // postStatus
-            );
-        }
+
+        // 판매글이 삭제된 경우
+        String title = post.isDeleted() ? "[삭제된 게시글] " + post.getTitle() : post.getTitle();
+        String status = post.isDeleted() ? "삭제됨" : post.getStatus().getDescription();
 
         return new ChatRoomDetailResponse(
                 room.getId(),
                 room.getSeller().getUserId(),
                 room.getBuyer().getUserId(),
                 post.getId(),
-                post.getTitle(),
+                title,
                 post.getPrice(),
                 post.getCreatedAt(),
                 post.getUpdatedAt(),
                 post.getThumbnail(),
-                post.getStatus().getDescription()
+                status
         );
     }
 
