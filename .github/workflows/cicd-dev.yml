@@ -61,7 +61,7 @@ jobs:
         run: |
           echo "${{ secrets.ENV_TEST }}" > .env.test
 
-      # 1. EC2의 기존 꼬인 폴더 구조 정리.
+      # 1. EC2의 기존 꼬인 폴더 구조 정리
       - name: Cleanup EC2 Directory
         uses: appleboy/ssh-action@master
         with:
