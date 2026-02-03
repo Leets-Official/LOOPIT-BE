@@ -38,9 +38,11 @@ public class UserService {
 
         User newUser = User.createKakaoUser(dto);
 
+        userRepository.save(newUser);
+
         authService.issueJwt(newUser, response);
 
-        return KakaoUserResponse.from(userRepository.save(newUser));
+        return KakaoUserResponse.from(newUser);
     }
 
     public KakaoUserResponse getUser(Long userId) {

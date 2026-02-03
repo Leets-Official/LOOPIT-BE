@@ -14,7 +14,7 @@ public class KakaoLoginResponse {
         this.registered = registered;
     }
 
-    public Long getUserId() {return userId;}
+    public Long getUserId() { return userId;}
 
     public Boolean getRegistered() {
         return registered;
