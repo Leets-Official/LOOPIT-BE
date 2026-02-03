@@ -10,13 +10,15 @@ public class PostBySellerResponse {
     private Long price;
     private String thumbnail;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public PostBySellerResponse(Long id, String title, Long price, String thumbnail, LocalDateTime createdAt) {
+    public PostBySellerResponse(Long id, String title, Long price, String thumbnail, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
         this.price = price;
         this.thumbnail = thumbnail;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public static PostBySellerResponse from(SellPost post) {
@@ -25,7 +27,8 @@ public class PostBySellerResponse {
                 post.getTitle(),
                 post.getPrice(),
                 post.getThumbnail(),
-                post.getCreatedAt()
+                post.getCreatedAt(),
+                post.getUpdatedAt()
         );
     }
 
@@ -35,4 +38,5 @@ public class PostBySellerResponse {
     public Long getPrice() { return price; }
     public String getThumbnail() { return thumbnail; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
 }
