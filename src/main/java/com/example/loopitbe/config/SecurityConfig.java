@@ -62,7 +62,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/test/**",
-                                "/user/register/kakao"
+                                "image/presigned-url"   // 회원가입 시 이미지 업로드 허용
                         ).permitAll()
 
                         // OPTIONS 요청 허용

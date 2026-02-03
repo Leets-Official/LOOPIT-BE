@@ -5,6 +5,7 @@ import com.example.loopitbe.dto.request.KakaoUserCreateRequest;
 import com.example.loopitbe.dto.response.KakaoLoginResponse;
 import com.example.loopitbe.dto.response.KakaoUserResponse;
 import com.example.loopitbe.service.AuthService;
+import com.example.loopitbe.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
     private final AuthService service;
+    private final UserService userService;
 
-    public AuthController(AuthService service) {
+    public AuthController(AuthService service, UserService userService) {
         this.service = service;
+        this.userService = userService;
     }
 
     @Operation(
@@ -36,6 +39,21 @@ public class AuthController {
         KakaoLoginResponse result = service.loginWithKakao(accessCode, response);
 
         return ResponseEntity.ok(ApiResponse.ok(result, "카카오 로그인 성공."));
+    }
+
+    @Operation(
+            summary = "신규 회원 생성",
+            description = "회원가입 성공 시 회원 정보 return"
+    )
+    @PostMapping("/register/kakao")
+    public ResponseEntity<ApiResponse<KakaoUserResponse>> createKakaoUser(
+            @Valid @RequestBody KakaoUserCreateRequest dto,
+            HttpServletResponse response){
+        KakaoUserResponse result = userService.createKakaoUser(dto, response);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(result, "카카오 유저 회원가입 성공."));
     }
 
     @Operation(

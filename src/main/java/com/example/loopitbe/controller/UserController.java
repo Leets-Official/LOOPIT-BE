@@ -25,20 +25,6 @@ public class UserController {
     }
 
     @Operation(
-            summary = "신규 회원 생성",
-            description = "회원가입 성공 시 회원 정보 return"
-    )
-    @PostMapping("/register/kakao")
-    public ResponseEntity<ApiResponse<KakaoUserResponse>> createKakaoUser(
-            @Valid @RequestBody KakaoUserCreateRequest dto,
-            HttpServletResponse response){
-        KakaoUserResponse result = service.createKakaoUser(dto, response);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(ApiResponse.ok(result, "카카오 유저 회원가입 성공."));
-    }
-    @Operation(
             summary = "사용자 정보 조회",
             description = "userId에 해당하는 사용자 정보 return, 없으면 404"
     )
