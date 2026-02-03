@@ -58,7 +58,7 @@ public class AuthService {
     }
 
     // jwt 발급 메서드
-    private void issueJwt(User user, HttpServletResponse response) {
+    public void issueJwt(User user, HttpServletResponse response) {
         String accessToken = jwtProvider.createAccessToken(user.getUserId());
         String refreshToken = jwtProvider.createRefreshToken(user.getUserId());
 

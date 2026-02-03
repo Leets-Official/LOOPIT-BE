@@ -7,6 +7,7 @@ import com.example.loopitbe.entity.User;
 import com.example.loopitbe.exception.CustomException;
 import com.example.loopitbe.exception.ErrorCode;
 import com.example.loopitbe.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,13 +18,15 @@ import javax.xml.stream.events.DTD;
 public class UserService {
     private final UserRepository userRepository;
     private final S3Service s3Service;
+    private final AuthService authService;
 
-    public UserService(UserRepository userRepository, S3Service s3Service) {
+    public UserService(UserRepository userRepository, S3Service s3Service, AuthService authService) {
         this.userRepository = userRepository;
         this.s3Service = s3Service;
+        this.authService = authService;
     }
 
-    public KakaoUserResponse createKakaoUser(KakaoUserCreateRequest dto) {
+    public KakaoUserResponse createKakaoUser(KakaoUserCreateRequest dto, HttpServletResponse response) {
         if (userRepository.existsUserByKakaoId(dto.getKakaoId()))
             throw new CustomException(ErrorCode.DUPLICATED_KAKAO_ID);
 
@@ -35,14 +38,16 @@ public class UserService {
 
         User newUser = User.createKakaoUser(dto);
 
-        return KakaoUserResponse.toDTO(userRepository.save(newUser));
+        authService.issueJwt(newUser, response);
+
+        return KakaoUserResponse.from(userRepository.save(newUser));
     }
 
     public KakaoUserResponse getUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return KakaoUserResponse.toDTO(user);
+        return KakaoUserResponse.from(user);
     }
 
     @Transactional
@@ -58,7 +63,7 @@ public class UserService {
 
         user.updateUser(dto);
 
-        return KakaoUserResponse.toDTO(user);
+        return KakaoUserResponse.from(user);
     }
 
     @Transactional
@@ -75,6 +80,6 @@ public class UserService {
             user.updateProfileImage(imgUrl);
         }
 
-        return KakaoUserResponse.toDTO(user);
+        return KakaoUserResponse.from(user);
     }
 }
