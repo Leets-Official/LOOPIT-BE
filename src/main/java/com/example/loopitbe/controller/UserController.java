@@ -8,6 +8,7 @@ import com.example.loopitbe.dto.response.KakaoUserResponse;
 import com.example.loopitbe.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,18 +24,6 @@ public class UserController {
         this.service = service;
     }
 
-    @Operation(
-            summary = "신규 회원 생성",
-            description = "회원가입 성공 시 회원 정보 return"
-    )
-    @PostMapping("/register/kakao")
-    public ResponseEntity<ApiResponse<KakaoUserResponse>> createKakaoUser(@Valid @RequestBody KakaoUserCreateRequest dto){
-        KakaoUserResponse response = service.createKakaoUser(dto);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(ApiResponse.ok(response, "카카오 유저 회원가입 성공."));
-    }
     @Operation(
             summary = "사용자 정보 조회",
             description = "userId에 해당하는 사용자 정보 return, 없으면 404"

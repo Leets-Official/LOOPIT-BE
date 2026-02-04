@@ -140,7 +140,8 @@ public class SellPostService {
             s3Service.deleteImage(url);
         }
 
-        sellPostRepository.delete(post);
+        // 상태 변경
+        post.markAsDeleted();
     }
 
     // 작성자 검증 로직

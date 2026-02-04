@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -78,25 +79,34 @@ public class ChatService {
     // 채팅방 생성 및 조회 메서드
     @Transactional
     public ChatRoomDetailResponse createOrGetChatRoom(ChatRoomCreateRequest request) {
-        // 1. 판매글 존재 여부 확인
+
+        // 1. 이미 존재하는 채팅방인지 먼저 확인 (기존 참여자라면 게시글 삭제 여부와 상관없이 입장)
+        Optional<ChatRoom> existingRoom = chatRoomRepository.findByBuyerUserIdAndSellerUserIdAndSellPostId(
+                request.getBuyerId(), request.getSellerId(), request.getSellPostId());
+
+        if (existingRoom.isPresent()) {
+            return ChatRoomDetailResponse.from(existingRoom.get());
+        }
+
+        // 2. 방이 존재하지 않을 경우에만 새로 생성
         SellPost sellPost = sellPostRepository.findById(request.getSellPostId())
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
-        // 2. 이미 존재하는 채팅방인지 확인
-        return chatRoomRepository.findByBuyerUserIdAndSellerUserIdAndSellPostId(
-                request.getBuyerId(), request.getSellerId(), request.getSellPostId())
-                .map(ChatRoomDetailResponse::from)
-                .orElseGet(() -> {
-                    // 3. 존재하지 않으면 새로 생성
-                    User buyer = userRepository.findById(request.getBuyerId())
-                            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-                    User seller = userRepository.findById(request.getSellerId())
-                            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        // 방이 없는 상태에서 새 방을 만들려고 하는데 게시글이 삭제되었다면 차단
+        if (sellPost.isDeleted()) {
+            throw new CustomException(ErrorCode.POST_ALREADY_DELETED);
+        }
 
-                    ChatRoom newRoom = new ChatRoom(buyer, seller, sellPost);
-                    ChatRoom savedRoom = chatRoomRepository.save(newRoom);
-                    return ChatRoomDetailResponse.from(savedRoom);
-                });
+        // 3. 신규 채팅방 생성
+        User buyer = userRepository.findById(request.getBuyerId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User seller = userRepository.findById(request.getSellerId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        ChatRoom newRoom = new ChatRoom(buyer, seller, sellPost);
+        ChatRoom savedRoom = chatRoomRepository.save(newRoom);
+
+        return ChatRoomDetailResponse.from(savedRoom);
     }
 
     // 모든 채팅방 조회

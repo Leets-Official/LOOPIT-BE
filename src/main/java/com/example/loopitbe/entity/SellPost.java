@@ -52,6 +52,14 @@ public class SellPost {
     @OneToMany(mappedBy = "sellPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions = new ArrayList<>();
 
+    // 판매글 삭제 시 해당하는 wishList도 같이 삭제
+    @OneToMany(mappedBy = "sellPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostWishList> wishLists = new ArrayList<>();
+
+    // 판매글 삭제 시 채팅방은 사라지지 않음.
+    @OneToMany(mappedBy = "sellPost")
+    private List<ChatRoom> chatRooms = new ArrayList<>();
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -65,6 +73,9 @@ public class SellPost {
 
     @Column(nullable = false)
     private String series;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 
     protected SellPost() {}
 
@@ -122,6 +133,11 @@ public class SellPost {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void markAsDeleted() {
+        this.isDeleted = true;
+        this.updatedAt = LocalDateTime.now();
+    }
+
     public List<String> getImageUrlList() {
         return this.images.stream()
                 .map(PostImage::getImageUrl)
@@ -135,6 +151,8 @@ public class SellPost {
     public List<Transaction> getTransactions() {
         return transactions;
     }
+    public List<PostWishList> getWishLists() { return wishLists; }
+    public List<ChatRoom> getChatRooms() { return chatRooms; }
 
     public Long getId() { return id; }
     public User getUser() { return user; }
@@ -154,4 +172,5 @@ public class SellPost {
     public BatteryStatus getBatteryStatus() { return batteryStatus; }
     public String getSeries() { return series; }
     public List<PostImage> getImages() { return images; }
+    public boolean isDeleted() { return isDeleted; }
 }

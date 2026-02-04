@@ -17,6 +17,9 @@ public class SellPostSpecification {
         return (Root<SellPost> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            // 삭제되지 않은 판매글만 조회
+            predicates.add(cb.equal(root.get("isDeleted"), false));
+
             // 1. 판매중 필터링
             if (Boolean.TRUE.equals(condition.getOnlySale())) {
                 predicates.add(cb.equal(root.get("status"), PostStatus.SALE));

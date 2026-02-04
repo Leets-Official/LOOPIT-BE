@@ -29,6 +29,8 @@ public enum ErrorCode {
     TRANSACTION_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "해당 판매글에 대해 진행 중이거나 완료된 거래가 이미 존재합니다."),
     ONGOING_TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "현재 진행 중인 거래가 존재하지 않습니다."),
     NOT_THE_BUYER(HttpStatus.FORBIDDEN, "예악 중인 거래에 해당하는 구매자가 아닙니다.");
+    ONGOING_TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "현재 진행 중인 거래가 존재하지 않습니다."),
+    POST_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이미 삭제된 게시글입니다.");
 
     private final HttpStatus status;
     private final String message;
