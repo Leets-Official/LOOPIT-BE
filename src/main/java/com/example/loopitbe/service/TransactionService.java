@@ -1,5 +1,6 @@
 package com.example.loopitbe.service;
 
+import com.example.loopitbe.dto.request.CancelTransactionRequest;
 import com.example.loopitbe.dto.request.CompleteTransactionRequest;
 import com.example.loopitbe.dto.request.CreateTransactionRequest;
 import com.example.loopitbe.dto.response.TransactionHistoryResponse;
@@ -74,10 +75,35 @@ public class TransactionService {
                 .filter(tr -> tr.getStatus() == TransactionStatus.RESERVED)
                 .orElseThrow(() -> new CustomException(ErrorCode.ONGOING_TRANSACTION_NOT_FOUND));
 
+        // 예악으로 성사된 거래의 구매자가 아닌 경우
+        if (!transaction.getBuyer().getUserId().equals(request.getBuyerId())){
+            throw new CustomException(ErrorCode.ONGOING_TRANSACTION_NOT_FOUND);
+        }
         transaction.updateStatus(TransactionStatus.COMPLETED);
         post.updateStatus(PostStatus.COMPLETED);
 
-        return  TransactionHistoryResponse.from(transactionRepository.save(transaction));
+        return  TransactionHistoryResponse.from(transaction);
+    }
+
+    @Transactional
+    public TransactionHistoryResponse cancelTransaction(CancelTransactionRequest request){
+        SellPost post = sellPostRepository.findById(request.getPostId())
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        // 판매자 본인이 아닌 경우 예외 처리
+        if (!post.getUser().getUserId().equals(request.getUserId())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
+
+        // 판매글에 대해 진행 중인 거래(예약 중) 존재하는지 확인
+        Transaction transaction = transactionRepository.findFirstBySellPost_IdOrderByCreatedAtDesc(request.getPostId())
+                .filter(tr -> tr.getStatus() == TransactionStatus.RESERVED)
+                .orElseThrow(() -> new CustomException(ErrorCode.ONGOING_TRANSACTION_NOT_FOUND));
+
+        transaction.updateStatus(TransactionStatus.CANCELED);
+        post.updateStatus(PostStatus.SALE);
+
+        return  TransactionHistoryResponse.from(transaction);
     }
 
     // 구매 내역 조회
