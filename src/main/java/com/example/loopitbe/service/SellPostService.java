@@ -42,9 +42,6 @@ public class SellPostService {
         this.s3Service = s3Service;
     }
 
-    /**
-     * 중고 판매 게시글 생성
-     */
     @Transactional
     public SellPostResponse createPost(Long userId, SellPostRequest requestDto) {
         User user = userRepository.findById(userId)
@@ -68,7 +65,7 @@ public class SellPostService {
 
         Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
 
-        Page<SellPost> posts = sellPostRepository.findAllByUser_UserId(userId, pageable);
+        Page<SellPost> posts = sellPostRepository.findAllByUser_UserIdAndIsDeletedFalse(userId, pageable);
 
         return posts.map(UserSellPostResponse::from);
     }
@@ -86,7 +83,7 @@ public class SellPostService {
     @Transactional(readOnly = true)
     public SellPostDetailResponse getSellPostDetail(Long postId) {
         // 1. 게시글 조회
-        SellPost post = sellPostRepository.findById(postId)
+        SellPost post = sellPostRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         // 2. 비슷한 상품 조회 로직
@@ -99,7 +96,7 @@ public class SellPostService {
     // 수정
     @Transactional
     public SellPostResponse updatePost(Long postId, Long userId, SellPostRequest requestDto) {
-        SellPost post = sellPostRepository.findById(postId)
+        SellPost post = sellPostRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         // 본인 확인
@@ -130,7 +127,7 @@ public class SellPostService {
     // 삭제
     @Transactional
     public void deletePost(Long postId, Long userId) {
-        SellPost post = sellPostRepository.findById(postId)
+        SellPost post = sellPostRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         validateWriter(post, userId);
@@ -140,7 +137,7 @@ public class SellPostService {
             s3Service.deleteImage(url);
         }
 
-        // 상태 변경
+        // 상태 변경 (orphanRemoval = true 설정으로 this.clear() 호출 시 JPA에서 연관 테이블의 row들 삭제)
         post.markAsDeleted();
     }
 
@@ -164,7 +161,7 @@ public class SellPostService {
             return List.of();
         }
 
-        return sellPostRepository.findTop4ByManufacturerAndModelInAndIdNotOrderByCreatedAtDesc(
+        return sellPostRepository.findTop4ByManufacturerAndModelInAndIdNotAndIsDeletedFalseOrderByCreatedAtDesc(
                         currentPost.getManufacturer(),
                         sameSeriesModels,
                         currentPost.getId()

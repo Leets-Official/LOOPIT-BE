@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-
 @RestController
 @RequestMapping("/sell-post")
 public class SellPostController {
@@ -118,7 +116,7 @@ public class SellPostController {
     // 판매글 등록
     @Operation(
             summary = "판매 상품 거래 완료",
-            description = "판매 상품 거래 완료하기. SellPost, Transaction의 status 필드를 거래완료로 변경. 예약 중인 거래 없을 시 에러"
+            description = "판매 상품 거래 완료하기. SellPost, Transaction의 status 필드를 거래완료로 변경. 이미 완료된 거래일 시 에러, 판매중인 게시물인 경우 거래를 새로 만들어서 저장"
     )
     @PostMapping("/complete")
     public ResponseEntity<ApiResponse<TransactionHistoryResponse>> completeTransaction(@RequestBody CompleteTransactionRequest request) {
@@ -131,7 +129,7 @@ public class SellPostController {
     // 판매글 등록
     @Operation(
             summary = "판매 상품 다시 판매중으로 설정",
-            description = "예약중인 판매 상품을 다시 판매중으로 설정. SellPost, Transaction의 status 필드를 취소됨으로 변경. 예약 중인 거래 없을 시 에러"
+            description = "예약중인 판매 상품을 다시 판매중으로 설정. SellPost, Transaction의 status 필드를 취소됨으로 변경. 완료된 혹은 예약 중인 거래 없을 시 에러"
     )
     @PostMapping("/active")
     public ResponseEntity<ApiResponse<TransactionHistoryResponse>> cancelTransaction(@RequestBody CancelTransactionRequest request) {

@@ -136,6 +136,8 @@ public class SellPost {
     public void markAsDeleted() {
         this.isDeleted = true;
         this.updatedAt = LocalDateTime.now();
+        this.images.clear();
+        this.wishLists.clear();
     }
 
     public List<String> getImageUrlList() {
