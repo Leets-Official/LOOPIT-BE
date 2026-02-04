@@ -20,6 +20,4 @@ public interface SellPostRepository extends JpaRepository<SellPost, Long>, JpaSp
             Long currentPostId
     );
     Optional<SellPost> findByIdAndIsDeletedFalse(Long id);
-
-    Page<SellPost> findAllAndIsDeletedFalse(Specification<SellPost> specification, Pageable pageable);
 }

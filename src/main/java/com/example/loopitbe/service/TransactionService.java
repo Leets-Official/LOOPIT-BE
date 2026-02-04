@@ -17,6 +17,7 @@ import com.example.loopitbe.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TransactionService {
@@ -35,11 +36,10 @@ public class TransactionService {
     @Transactional
     public TransactionHistoryResponse createTransaction(CreateTransactionRequest request) {
         // 판매글에 대해 진행 중 또는 완료된 거래 존재하는 지 확인
+        // 기존 예약중, 거래완료 거래는 취소 처리
         transactionRepository.findFirstBySellPost_IdOrderByCreatedAtDesc(request.getPostId())
                 .ifPresent(tr -> {
-                    if (tr.getStatus() != TransactionStatus.CANCELED) {
-                        throw new CustomException(ErrorCode.TRANSACTION_ALREADY_EXISTS);
-                    }
+                    tr.updateStatus(TransactionStatus.CANCELED);
                 });
 
         SellPost post = sellPostRepository.findById(request.getPostId())
@@ -70,19 +70,34 @@ public class TransactionService {
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
 
-        // 판매글에 대해 진행 중인 거래(예약 중) 존재하는지 확인
+        User buyer = userRepository.findById(request.getBuyerId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         Transaction transaction = transactionRepository.findFirstBySellPost_IdOrderByCreatedAtDesc(request.getPostId())
-                .filter(tr -> tr.getStatus() == TransactionStatus.RESERVED)
-                .orElseThrow(() -> new CustomException(ErrorCode.ONGOING_TRANSACTION_NOT_FOUND));
+                .orElse(null);
 
-        // 예악으로 성사된 거래의 구매자가 아닌 경우
-        if (!transaction.getBuyer().getUserId().equals(request.getBuyerId())){
-            throw new CustomException(ErrorCode.ONGOING_TRANSACTION_NOT_FOUND);
+        // 예약 중, 거래완료가 아닌 경우 -> 거래완료로 거래 새로 만들어서 저장
+        if (transaction == null) {
+            transaction = transactionRepository.save(Transaction.createTransaction(post, buyer, post.getUser()));
+            post.updateStatus(PostStatus.COMPLETED);
         }
-        transaction.updateStatus(TransactionStatus.COMPLETED);
-        post.updateStatus(PostStatus.COMPLETED);
+        else{
+            // 거래에 해당하는 구매자와 일치하지 않는 경우
+            if (!transaction.getBuyer().getUserId().equals(request.getBuyerId())){
+                throw new CustomException(ErrorCode.NOT_THE_BUYER);
+            }
+            // 이미 거래 완료된 거래인 경우(에러 처리)
+            if (transaction.getStatus().equals(TransactionStatus.COMPLETED)){
+                throw new CustomException(ErrorCode.TRANSACTION_ALREADY_COMPLETED);
+            }
+            // 예약 중인 경우
+            else{
+                transaction.updateStatus(TransactionStatus.COMPLETED);
+                post.updateStatus(PostStatus.COMPLETED);
+            }
+        }
 
-        return  TransactionHistoryResponse.from(transaction);
+        return TransactionHistoryResponse.from(transaction);
     }
 
     @Transactional
@@ -95,10 +110,10 @@ public class TransactionService {
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
 
-        // 판매글에 대해 진행 중인 거래(예약 중) 존재하는지 확인
+        // 판매글에 대해 진행 중인 거래(예약 중) 혹은 거래완료된 거래 존재하는지 확인
         Transaction transaction = transactionRepository.findFirstBySellPost_IdOrderByCreatedAtDesc(request.getPostId())
-                .filter(tr -> tr.getStatus() == TransactionStatus.RESERVED)
-                .orElseThrow(() -> new CustomException(ErrorCode.ONGOING_TRANSACTION_NOT_FOUND));
+                .filter(tr -> tr.getStatus() != TransactionStatus.CANCELED)
+                .orElseThrow(() -> new CustomException(ErrorCode.ONGOING_OR_COMPLETED_TRANSACTION_NOT_FOUND));
 
         transaction.updateStatus(TransactionStatus.CANCELED);
         post.updateStatus(PostStatus.SALE);

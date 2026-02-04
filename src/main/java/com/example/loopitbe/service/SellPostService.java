@@ -75,7 +75,7 @@ public class SellPostService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "updatedAt"));
         Specification<SellPost> spec = SellPostSpecification.search(condition);
 
-        return sellPostRepository.findAllAndIsDeletedFalse(spec, pageable)
+        return sellPostRepository.findAll(spec, pageable)
                 .map(SellPostListResponse::from);
     }
 
