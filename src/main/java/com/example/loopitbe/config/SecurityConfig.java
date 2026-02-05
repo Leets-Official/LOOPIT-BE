@@ -65,6 +65,9 @@ public class SecurityConfig {
                                 "image/presigned-url"   // 회원가입 시 이미지 업로드 허용
                         ).permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/sell-post").permitAll()      // 구매하기 목록 조회 허용
+                        .requestMatchers(HttpMethod.GET, "/sell-post/detail/**").permitAll() // 구매하기 상세 조회 허용
+
                         // OPTIONS 요청 허용
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 

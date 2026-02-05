@@ -92,8 +92,6 @@ public class SellPostService {
         boolean isLiked = false;
         if (userId != null) {
             isLiked = postWishListRepository.existsByUser_UserIdAndSellPost_Id(userId, postId);
-        } else {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         // 4. DTO 변환 및 반환

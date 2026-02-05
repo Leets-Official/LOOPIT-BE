@@ -87,8 +87,13 @@ public class SellPostController {
     public ResponseEntity<ApiResponse<SellPostResponse>> updateSellPost(
             @PathVariable Long postId,
             @RequestBody SellPostRequest requestDto,
-            @Parameter(hidden = true) @AuthenticationPrincipal Long userId
+            @Parameter(hidden = true) @AuthenticationPrincipal Object principal
     ) {
+        Long userId = null;
+        if (principal instanceof Long) {
+            userId = (Long) principal;
+        }
+
         SellPostResponse response = sellPostService.updatePost(postId, userId, requestDto);
         return ResponseEntity.ok(ApiResponse.ok(response, "판매글 수정 성공."));
     }
