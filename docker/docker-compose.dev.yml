@@ -43,6 +43,7 @@ services:
       TZ: Asia/Seoul
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./devices_insert.sql:/docker-entrypoint-initdb.d/devices_insert.sql
     command:
       - "--default-authentication-plugin=mysql_native_password"
       - "--performance-schema=off"
