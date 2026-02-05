@@ -105,6 +105,10 @@ public class ChatBotService {
                     .bodyValue(body)
                     .retrieve()
                     .bodyToMono(Map.class)
+                    .doOnNext(response -> {
+                        // 이 로그가 docker logs에서 확인해야 할 핵심 로그입니다!
+                        log.info("Gemini Raw Response: {}", response);
+                    })
                     .map(this::extractTextFromResponse)
                     .block();
         } catch (WebClientResponseException e) {
