@@ -17,7 +17,6 @@ import com.example.loopitbe.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TransactionService {
@@ -34,7 +33,7 @@ public class TransactionService {
 
     // 판매자가 예약중으로 변경 시 Transaction 시작.
     @Transactional
-    public TransactionHistoryResponse createTransaction(CreateTransactionRequest request) {
+    public TransactionHistoryResponse createTransaction(CreateTransactionRequest request, Long userId) {
         // 판매글에 대해 진행 중 또는 완료된 거래 존재하는 지 확인
         // 기존 예약중, 거래완료 거래는 취소 처리
         transactionRepository.findFirstBySellPost_IdOrderByCreatedAtDesc(request.getPostId())
@@ -45,7 +44,7 @@ public class TransactionService {
         SellPost post = sellPostRepository.findById(request.getPostId())
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
         // 판매자 본인이 아닌 경우 예외 처리
-        if (!post.getUser().getUserId().equals(request.getUserId())) {
+        if (!post.getUser().getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
 
@@ -61,12 +60,12 @@ public class TransactionService {
     }
 
     @Transactional
-    public TransactionHistoryResponse completeTransaction(CompleteTransactionRequest request){
+    public TransactionHistoryResponse completeTransaction(CompleteTransactionRequest request, Long userId){
         SellPost post = sellPostRepository.findById(request.getPostId())
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         // 판매자 본인이 아닌 경우 예외 처리
-        if (!post.getUser().getUserId().equals(request.getUserId())) {
+        if (!post.getUser().getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
 
@@ -101,12 +100,12 @@ public class TransactionService {
     }
 
     @Transactional
-    public TransactionHistoryResponse cancelTransaction(CancelTransactionRequest request){
+    public TransactionHistoryResponse cancelTransaction(CancelTransactionRequest request, Long userId){
         SellPost post = sellPostRepository.findById(request.getPostId())
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         // 판매자 본인이 아닌 경우 예외 처리
-        if (!post.getUser().getUserId().equals(request.getUserId())) {
+        if (!post.getUser().getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
 

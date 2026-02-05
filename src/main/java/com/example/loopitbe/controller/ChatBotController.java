@@ -6,8 +6,10 @@ import com.example.loopitbe.dto.response.ChatBotHistoryResponse;
 import com.example.loopitbe.dto.response.ChatBotResponse;
 import com.example.loopitbe.service.ChatBotService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,12 +30,12 @@ public class ChatBotController {
                     "수리비 견적과 상관없는 질문 시 reply필드에 '제가 답변드릴 수 없는 질문입니다. 저는 수리비를 예측해주는 챗봇입니다.'라고 return"
     )
     @PostMapping("/send")
-    public ResponseEntity<ApiResponse<ChatBotResponse>> sendMessage(@RequestBody ChatBotRequest request) {
+    public ResponseEntity<ApiResponse<ChatBotResponse>> sendMessage(@RequestBody ChatBotRequest request, @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
         // 1차필터링 -> Redis 제한 체크
-        chatBotService.checkAvailability(request.getUserId());
+        chatBotService.checkAvailability(userId);
 
         // Gemini API 호출
-        String reply = chatBotService.getRepairEstimate(request.getUserId(), request.getMessage());
+        String reply = chatBotService.getRepairEstimate(userId, request.getMessage());
 
         return ResponseEntity.ok(ApiResponse.ok(new ChatBotResponse(reply), "챗봇 답변 완료."));
     }
@@ -43,7 +45,7 @@ public class ChatBotController {
             description = "userId에 해당하는 TTL 살아있는 모든 질문&답변 조회"
     )
     @GetMapping("/history")
-    public ResponseEntity<ApiResponse<List<ChatBotHistoryResponse>>> getChatBotHistory(@RequestParam("userId") Long userId) {
+    public ResponseEntity<ApiResponse<List<ChatBotHistoryResponse>>> getChatBotHistory(@Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
         List<ChatBotHistoryResponse> history = chatBotService.getChatHistoryParsed(userId);
 
         return ResponseEntity.ok(ApiResponse.ok(history, "챗봇 대화내역 조회 완료."));

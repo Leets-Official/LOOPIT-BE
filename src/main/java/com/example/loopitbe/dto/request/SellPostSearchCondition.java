@@ -5,7 +5,6 @@ import com.example.loopitbe.enums.PriceRange;
 import java.util.List;
 
 public class SellPostSearchCondition {
-    private Boolean onlySale;
     private String manufacturer;
     private List<String> series;
     private PriceRange priceRange;
@@ -13,8 +12,7 @@ public class SellPostSearchCondition {
 
     public SellPostSearchCondition() {}
 
-    public SellPostSearchCondition(Boolean onlySale, String manufacturer, List<String> series, PriceRange priceRange, String keyword) {
-        this.onlySale = onlySale;
+    public SellPostSearchCondition(String manufacturer, List<String> series, PriceRange priceRange, String keyword) {
         this.manufacturer = manufacturer;
         this.series = series;
         this.priceRange = priceRange;
@@ -22,15 +20,10 @@ public class SellPostSearchCondition {
     }
 
     // Getters
-    public Boolean getOnlySale() { return onlySale; }
     public String getManufacturer() { return manufacturer; }
     public List<String> getSeries() { return series; }
     public PriceRange getPriceRange() { return priceRange; }
     public String getKeyword() { return keyword; }
-
-    public void setOnlySale(Boolean onlySale) {
-        this.onlySale = onlySale;
-    }
 
     public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;

@@ -7,8 +7,10 @@ import com.example.loopitbe.dto.response.ChatRoomDetailResponse;
 import com.example.loopitbe.dto.response.ChatRoomListResponse;
 import com.example.loopitbe.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,7 +42,7 @@ public class ChatRestController {
             description = "특정 유저가 참여 중인 모든 채팅방 목록을 조회"
     )
     @GetMapping("/rooms")
-    public ResponseEntity<ApiResponse<List<ChatRoomListResponse>>> getMyRooms(@RequestParam Long userId) {
+    public ResponseEntity<ApiResponse<List<ChatRoomListResponse>>> getMyRooms(@Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
         List<ChatRoomListResponse> responses = chatService.getMyChatRooms(userId);
         return ResponseEntity.ok(ApiResponse.ok(responses, "채팅 목록 조회 성공."));
     }
@@ -53,7 +55,7 @@ public class ChatRestController {
     @GetMapping("/room/{roomId}/messages")
     public ResponseEntity<ApiResponse<List<ChatMessageResponse>>> getChatMessages(
             @PathVariable Long roomId,
-            @RequestParam Long userId
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId
     ) {
         // 해당 유저가 안 읽은 메시지들을 읽음 처리
         chatService.markMessagesAsRead(roomId, userId);

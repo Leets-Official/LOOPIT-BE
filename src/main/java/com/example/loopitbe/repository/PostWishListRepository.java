@@ -13,4 +13,6 @@ public interface PostWishListRepository extends JpaRepository<PostWishList, Long
     Optional<PostWishList> findByUser_UserIdAndSellPost_Id(Long userId, Long postId);
     @Query("SELECT w FROM PostWishList w JOIN FETCH w.sellPost WHERE w.user.userId = :userId")
     List<PostWishList> findAllByUserId(Long userId);
+
+    boolean existsByUser_UserIdAndSellPost_Id(Long userId, Long postId);
 }

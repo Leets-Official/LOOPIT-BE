@@ -17,13 +17,11 @@ public class SellPostSpecification {
         return (Root<SellPost> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // 삭제되지 않은 판매글만 조회
+            // 기본 조건 - 삭제되지 않은 판매글만 조회
             predicates.add(cb.equal(root.get("isDeleted"), false));
 
-            // 1. 판매중 필터링
-            if (Boolean.TRUE.equals(condition.getOnlySale())) {
-                predicates.add(cb.equal(root.get("status"), PostStatus.SALE));
-            }
+            // 기본 조건 - 판매중 상태인 판매글만 조회
+            predicates.add(cb.equal(root.get("status"), PostStatus.SALE));
 
             // 2. 제조사 필터링
             if (condition.getManufacturer() != null && !condition.getManufacturer().trim().isEmpty()) {
