@@ -11,8 +11,11 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -48,6 +51,17 @@ public class StompHandler implements ChannelInterceptor {
                 Long userId = jwtProvider.getUserId(token);
 
                 if (userId != null) {
+                    // Principal 설정을 위한 인증 객체 생성
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userId, // principal.getName()
+                                    null,
+                                    List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                            );
+
+                    // accessor에 유저 정보 등록
+                    accessor.setUser(authentication);
+
                     Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
                     // 만약 attributes가 null이면 새로 만들어서 넣어줌
                     if (sessionAttributes != null) {

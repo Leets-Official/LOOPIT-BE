@@ -40,8 +40,8 @@ public class WishListService {
         this.sellPostRepository = sellPostRepository;
     }
 
-    public String togglePostWishList(PostWishlistToggleRequest dto){
-        Optional<PostWishList> wishlist = postWishListRepository.findByUser_UserIdAndSellPost_Id(dto.getUserId(), dto.getPostId());
+    public String togglePostWishList(PostWishlistToggleRequest dto, Long userId){
+        Optional<PostWishList> wishlist = postWishListRepository.findByUser_UserIdAndSellPost_Id(userId, dto.getPostId());
 
         if (wishlist.isPresent()) {
             // 이미 존재하면 삭제
@@ -49,7 +49,7 @@ public class WishListService {
             return "Disabled";
         } else {
             // 존재하지 않으면 추가
-            User user = userRepository.findById(dto.getUserId())
+            User user = userRepository.findById(userId)
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
             SellPost post = sellPostRepository.findById(dto.getPostId())
                     .orElseThrow(() -> new CustomException(ErrorCode.SELL_POST_NOT_FOUND));
@@ -67,8 +67,8 @@ public class WishListService {
                 .toList();
     }
 
-    public String toggleShopWishList(ShopWishlistToggleRequest dto){
-        Optional<ShopWishList> wishlist = shopWishListRepository.findByUser_UserIdAndShopName(dto.getUserId(), dto.getShopName());
+    public String toggleShopWishList(ShopWishlistToggleRequest dto, Long userId){
+        Optional<ShopWishList> wishlist = shopWishListRepository.findByUser_UserIdAndShopName(userId, dto.getShopName());
 
         if (wishlist.isPresent()) {
             // 이미 존재하면 삭제
@@ -76,7 +76,7 @@ public class WishListService {
             return "Disabled";
         } else {
             // 존재하지 않으면 추가
-            User user = userRepository.findById(dto.getUserId())
+            User user = userRepository.findById(userId)
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
             shopWishListRepository.save(new ShopWishList(user, dto));
             return "Enabled";
@@ -93,8 +93,8 @@ public class WishListService {
     }
 
     @Transactional
-    public List<IsShopInWishListResponse> checkShopWishList(IsShopInWishListRequest dto) {
-        List<String> existingWishedNames = shopWishListRepository.findWishedShopNames(dto.getUserId(), dto.getShopNames());
+    public List<IsShopInWishListResponse> checkShopWishList(IsShopInWishListRequest dto, Long userId) {
+        List<String> existingWishedNames = shopWishListRepository.findWishedShopNames(userId, dto.getShopNames());
 
         return dto.getShopNames().stream()
                 .map(name -> new IsShopInWishListResponse(

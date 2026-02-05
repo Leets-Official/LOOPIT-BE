@@ -6,8 +6,10 @@ import com.example.loopitbe.dto.response.TransactionHistoryResponse;
 import com.example.loopitbe.service.MyPageService;
 import com.example.loopitbe.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +32,7 @@ public class MyPageController {
             description = "마이페이지 최초 로드 시 정보 로드. 사용자 대시보드 정보 및 전체 구매내역 반환"
     )
     @GetMapping
-    public ResponseEntity<ApiResponse<MyPageResponse>> getMyPageMain(@RequestParam Long userId) {
+    public ResponseEntity<ApiResponse<MyPageResponse>> getMyPageMain(@Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
         MyPageResponse response = myPageService.getMyPageInfo(userId);
         return ResponseEntity.ok(ApiResponse.ok(response, "마이페이지 메인 정보 조회 성공."));
     }
@@ -41,7 +43,7 @@ public class MyPageController {
     )
     @GetMapping("/history/buy")
     public ResponseEntity<ApiResponse<List<TransactionHistoryResponse>>> getBuyHistory(
-            @RequestParam Long userId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId,
             @RequestParam(defaultValue = "ALL") String status) {
         List<TransactionHistoryResponse> responses = transactionService.getBuyHistory(userId, status);
         return ResponseEntity.ok(ApiResponse.ok(responses, "구매 내역 조회 성공."));
@@ -53,7 +55,7 @@ public class MyPageController {
     )
     @GetMapping("/history/sell")
     public ResponseEntity<ApiResponse<List<TransactionHistoryResponse>>> getSellHistory(
-            @RequestParam Long userId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId,
             @RequestParam(defaultValue = "ALL") String status) {
         List<TransactionHistoryResponse> responses = transactionService.getSellHistory(userId, status);
         return ResponseEntity.ok(ApiResponse.ok(responses, "판매 내역 조회 성공."));

@@ -41,11 +41,11 @@ public class ChatService {
     }
 
     // 메시지 저장
-    public ChatMessageResponse saveMessage(ChatMessageRequest request) {
+    public ChatMessageResponse saveMessage(ChatMessageRequest request, Long userId) {
         // 1. 채팅방 및 유저 조회
         ChatRoom room = chatRoomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND));
-        User sender = userRepository.findById(request.getSenderId())
+        User sender = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 2. 메시지 내용 처리 (이미지일 경우, 실제 URL은 ChatImage에 저장)

@@ -6,9 +6,11 @@ import com.example.loopitbe.dto.response.*;
 import com.example.loopitbe.service.SellPostService;
 import com.example.loopitbe.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,7 +33,7 @@ public class SellPostController {
     @PostMapping
     public ResponseEntity<ApiResponse<SellPostResponse>> createSellPost(
             @RequestBody SellPostRequest requestDto,
-            @RequestAttribute Long userId) {
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
 
         SellPostResponse response = sellPostService.createPost(userId, requestDto);
 
@@ -73,7 +75,7 @@ public class SellPostController {
     @GetMapping("/detail/{postId}")
     public ResponseEntity<ApiResponse<SellPostDetailResponse>> getSellPostDetail(
             @PathVariable Long postId,
-            @RequestParam Long userId
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId
     ) {
         SellPostDetailResponse response = sellPostService.getSellPostDetail(postId, userId);
 
@@ -85,7 +87,7 @@ public class SellPostController {
     public ResponseEntity<ApiResponse<SellPostResponse>> updateSellPost(
             @PathVariable Long postId,
             @RequestBody SellPostRequest requestDto,
-            @RequestAttribute Long userId
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId
     ) {
         SellPostResponse response = sellPostService.updatePost(postId, userId, requestDto);
         return ResponseEntity.ok(ApiResponse.ok(response, "판매글 수정 성공."));
@@ -95,7 +97,7 @@ public class SellPostController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<ApiResponse<Void>> deleteSellPost(
             @PathVariable Long postId,
-            @RequestAttribute Long userId
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId
     ) {
         sellPostService.deletePost(postId, userId);
         return ResponseEntity.ok(ApiResponse.ok(null, "판매글 삭제 성공."));
@@ -107,9 +109,9 @@ public class SellPostController {
             description = "판매 상품 예약. SellPost, Transaction의 status 필드를 예약중으로 변경. 이미 진행중 혹은 완료된 거래 존재 시 에러"
     )
     @PostMapping("/reserve")
-    public ResponseEntity<ApiResponse<TransactionHistoryResponse>> createTransaction(@RequestBody CreateTransactionRequest request) {
+    public ResponseEntity<ApiResponse<TransactionHistoryResponse>> createTransaction(@RequestBody CreateTransactionRequest request, @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
 
-        TransactionHistoryResponse response = transactionService.createTransaction(request);
+        TransactionHistoryResponse response = transactionService.createTransaction(request, userId);
 
         return ResponseEntity.ok(ApiResponse.ok(response, "판매 상품 예약 성공."));
     }
@@ -120,9 +122,9 @@ public class SellPostController {
             description = "판매 상품 거래 완료하기. SellPost, Transaction의 status 필드를 거래완료로 변경. 이미 완료된 거래일 시 에러, 판매중인 게시물인 경우 거래를 새로 만들어서 저장"
     )
     @PostMapping("/complete")
-    public ResponseEntity<ApiResponse<TransactionHistoryResponse>> completeTransaction(@RequestBody CompleteTransactionRequest request) {
+    public ResponseEntity<ApiResponse<TransactionHistoryResponse>> completeTransaction(@RequestBody CompleteTransactionRequest request, @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
 
-        TransactionHistoryResponse response = transactionService.completeTransaction(request);
+        TransactionHistoryResponse response = transactionService.completeTransaction(request, userId);
 
         return ResponseEntity.ok(ApiResponse.ok(response, "판매 상품 거래 완료."));
     }
@@ -133,9 +135,9 @@ public class SellPostController {
             description = "예약중인 판매 상품을 다시 판매중으로 설정. SellPost, Transaction의 status 필드를 취소됨으로 변경. 완료된 혹은 예약 중인 거래 없을 시 에러"
     )
     @PostMapping("/active")
-    public ResponseEntity<ApiResponse<TransactionHistoryResponse>> cancelTransaction(@RequestBody CancelTransactionRequest request) {
+    public ResponseEntity<ApiResponse<TransactionHistoryResponse>> cancelTransaction(@RequestBody CancelTransactionRequest request, @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
 
-        TransactionHistoryResponse response = transactionService.cancelTransaction(request);
+        TransactionHistoryResponse response = transactionService.cancelTransaction(request, userId);
 
         return ResponseEntity.ok(ApiResponse.ok(response, "판매 상품 판매중으로 변경 완료."));
     }

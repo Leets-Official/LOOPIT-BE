@@ -1,17 +1,16 @@
 package com.example.loopitbe.controller;
 
 import com.example.loopitbe.common.ApiResponse;
-import com.example.loopitbe.dto.request.KakaoUserCreateRequest;
 import com.example.loopitbe.dto.request.UserImgUpdateRequest;
 import com.example.loopitbe.dto.request.UserUpdateRequest;
 import com.example.loopitbe.dto.response.KakaoUserResponse;
 import com.example.loopitbe.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "User", description = "사용자 관련 컨트롤러(회원가입, 조회 등)")
@@ -29,7 +28,7 @@ public class UserController {
             description = "userId에 해당하는 사용자 정보 return, 없으면 404"
     )
     @GetMapping
-    public ResponseEntity<ApiResponse<KakaoUserResponse>> getUser(@RequestParam("userId") Long userId){
+    public ResponseEntity<ApiResponse<KakaoUserResponse>> getUser(@Parameter(hidden = true) @AuthenticationPrincipal Long userId){
         return ResponseEntity.ok(ApiResponse.ok(service.getUser(userId), "사용자 정보 조회 성공."));
     }
 
