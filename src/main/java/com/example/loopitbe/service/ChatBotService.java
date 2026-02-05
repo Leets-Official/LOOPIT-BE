@@ -87,12 +87,17 @@ public class ChatBotService {
 
     // 제미나이 API 호출
     private String callGeminiApi(String prompt) {
+        Map<String, Object> googleSearchTool = Map.of(
+                "google_search_retrieval", Map.of()
+        );
+
         Map<String, Object> body = Map.of(
                 "contents", List.of(
                         Map.of("parts", List.of(
                                 Map.of("text", prompt)
                         ))
-                )
+                ),
+                "tools", List.of(Map.of("google_search", googleSearchTool))
         );
 
         try {
