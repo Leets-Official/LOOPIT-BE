@@ -34,7 +34,10 @@ public class SellPostDetailResponse {
     // 비슷한 상품 리스트
     private List<SimilarPostResponse> similarPosts;
 
-    public SellPostDetailResponse(SellPost post, List<SimilarPostResponse> similarPosts) {
+    // 사용자의 찜 여부
+    private boolean isLiked;
+
+    public SellPostDetailResponse(SellPost post, List<SimilarPostResponse> similarPosts, boolean isLiked) {
         User seller = post.getUser();
 
         this.id = post.getId();
@@ -59,6 +62,8 @@ public class SellPostDetailResponse {
         this.sellerProfileImage = seller.getProfileImage();
 
         this.similarPosts = similarPosts;
+
+        this.isLiked = isLiked;
     }
 
     // Getters
@@ -81,4 +86,5 @@ public class SellPostDetailResponse {
     public String getSellerNickname() { return sellerNickname; }
     public String getSellerProfileImage() { return sellerProfileImage; }
     public List<SimilarPostResponse> getSimilarPosts() { return similarPosts; }
+    public boolean isLiked() { return isLiked; }
 }

@@ -53,7 +53,7 @@ public class SellPostController {
     // 판매글 목록 조회
     @Operation(
             summary = "판매글 목록 조회",
-            description = "판매 상태, 제조사, 시리즈, 가격대 필터를 적용하여 판매글 목록을 10개씩 페이징 조회"
+            description = "제조사, 시리즈, 가격대, 키워드 필터를 적용하여 판매글 목록을 10개씩 페이징 조회"
     )
     @GetMapping
     public ResponseEntity<ApiResponse<Page<SellPostListResponse>>> getSellPosts(
@@ -72,9 +72,10 @@ public class SellPostController {
     )
     @GetMapping("/detail/{postId}")
     public ResponseEntity<ApiResponse<SellPostDetailResponse>> getSellPostDetail(
-            @PathVariable Long postId
+            @PathVariable Long postId,
+            @RequestParam Long userId
     ) {
-        SellPostDetailResponse response = sellPostService.getSellPostDetail(postId);
+        SellPostDetailResponse response = sellPostService.getSellPostDetail(postId, userId);
 
         return ResponseEntity.ok(ApiResponse.ok(response, "판매글 상세 조회 성공."));
     }

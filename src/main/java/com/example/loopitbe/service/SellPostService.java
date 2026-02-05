@@ -8,10 +8,7 @@ import com.example.loopitbe.dto.response.SimilarPostResponse;
 import com.example.loopitbe.entity.Device;
 import com.example.loopitbe.entity.SellPost;
 import com.example.loopitbe.entity.User;
-import com.example.loopitbe.repository.DeviceRepository;
-import com.example.loopitbe.repository.SellPostRepository;
-import com.example.loopitbe.repository.SellPostSpecification;
-import com.example.loopitbe.repository.UserRepository;
+import com.example.loopitbe.repository.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,12 +31,14 @@ public class SellPostService {
     private final UserRepository userRepository;
     private final DeviceRepository deviceRepository;
     private final S3Service s3Service;
+    private final PostWishListRepository postWishListRepository;
 
-    public SellPostService(SellPostRepository sellPostRepository, UserRepository userRepository, DeviceRepository deviceRepository, S3Service s3Service) {
+    public SellPostService(SellPostRepository sellPostRepository, UserRepository userRepository, DeviceRepository deviceRepository, S3Service s3Service, PostWishListRepository postWishListRepository) {
         this.sellPostRepository = sellPostRepository;
         this.userRepository = userRepository;
         this.deviceRepository = deviceRepository;
         this.s3Service = s3Service;
+        this.postWishListRepository = postWishListRepository;
     }
 
     @Transactional
@@ -81,7 +80,7 @@ public class SellPostService {
 
     // 상세 조회
     @Transactional(readOnly = true)
-    public SellPostDetailResponse getSellPostDetail(Long postId) {
+    public SellPostDetailResponse getSellPostDetail(Long postId, Long userId) {
         // 1. 게시글 조회
         SellPost post = sellPostRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
@@ -89,8 +88,16 @@ public class SellPostService {
         // 2. 비슷한 상품 조회 로직
         List<SimilarPostResponse> similarPostResponses = getSimilarPosts(post);
 
-        // 3. DTO 변환 및 반환
-        return new SellPostDetailResponse(post, similarPostResponses);
+        // 3. 찜 여부 확인 로직
+        boolean isLiked = false;
+        if (userId != null) {
+            isLiked = postWishListRepository.existsByUser_UserIdAndSellPost_Id(userId, postId);
+        } else {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        // 4. DTO 변환 및 반환
+        return new SellPostDetailResponse(post, similarPostResponses, isLiked);
     }
 
     // 수정
