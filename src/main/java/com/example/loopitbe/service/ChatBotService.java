@@ -4,6 +4,8 @@ import com.example.loopitbe.dto.response.ChatBotHistoryResponse;
 import com.example.loopitbe.exception.CustomException;
 import com.example.loopitbe.exception.ErrorCode;
 import com.example.loopitbe.exception.RateLimitException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class ChatBotService {
     private static final String HISTORY_KEY = "user:history:";
     @Value("${GEMINI_API_KEY}")
     private String API_KEY;
+    private static final Logger log = LoggerFactory.getLogger(ChatBotService.class);
 
     public ChatBotService(WebClient.Builder webClientBuilder, StringRedisTemplate redisTemplate) {
         this.webClient = webClientBuilder.baseUrl("https://generativelanguage.googleapis.com").build();
@@ -40,6 +43,8 @@ public class ChatBotService {
     }
 
     public String getRepairEstimate(Long userId, String userMessage) {
+        log.info("제마나이 요청 질문 값 : {}",  userMessage);
+
         // Redis에서 이전 대화 내역 가져오기
         List<String> history = getChatHistory(userId);
 
