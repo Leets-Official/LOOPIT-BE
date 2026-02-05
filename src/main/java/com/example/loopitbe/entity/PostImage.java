@@ -10,7 +10,7 @@ public class PostImage {
     @Column(name = "image_id")
     private Long id;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", length = 1024)
     private String imageUrl;
 
     private int sortOrder;

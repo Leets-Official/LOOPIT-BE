@@ -17,7 +17,7 @@ public class ChatImage {
     @JoinColumn(name = "message_id")
     private ChatMessage message;
 
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url", nullable = false, length = 1024)
     private String imageUrl;
 
     @CreationTimestamp

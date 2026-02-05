@@ -29,7 +29,7 @@ public class User {
     @Column(nullable = false)
     private LocalDate birthdate;
 
-    @Column(name = "profile_image")
+    @Column(name = "profile_image", length = 1024)
     private String profileImage;
 
     @Column(name = "login_method", nullable = false)
