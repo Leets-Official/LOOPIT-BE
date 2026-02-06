@@ -23,6 +23,10 @@ public class ChatMessage {
     @JoinColumn(name = "sender_id")
     private User sender;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id")
+    private User receiver;
+
     @Column(name = "message_type")
     @Enumerated(EnumType.STRING)
     private MessageType messageType;
@@ -43,9 +47,10 @@ public class ChatMessage {
     // 기본 생성자
     protected ChatMessage() {}
 
-    public ChatMessage(ChatRoom chatRoom, User sender, MessageType messageType, String content) {
+    public ChatMessage(ChatRoom chatRoom, User sender, User receiver, MessageType messageType, String content) {
         this.chatRoom = chatRoom;
         this.sender = sender;
+        this.receiver = receiver;
         this.messageType = messageType;
         this.content = content;
         this.isRead = false;
@@ -60,6 +65,7 @@ public class ChatMessage {
     public Long getId() { return id; }
     public ChatRoom getChatRoom() { return chatRoom; }
     public User getSender() { return sender; }
+    public User getReceiver() { return receiver; }
     public MessageType getMessageType() { return messageType; }
     public String getContent() { return content; }
     public ChatImage getChatImage() { return chatImage; }

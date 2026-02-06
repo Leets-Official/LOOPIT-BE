@@ -47,6 +47,9 @@ public class ChatService {
                 .orElseThrow(() -> new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND));
         User sender = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User receiver = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
 
         // 2. 메시지 내용 처리 (이미지일 경우, 실제 URL은 ChatImage에 저장)
         String msgContent = request.getContent();
@@ -58,6 +61,7 @@ public class ChatService {
         ChatMessage message = new ChatMessage(
                 room,
                 sender,
+                receiver,
                 request.getType(),
                 msgContent
         );
@@ -157,5 +161,10 @@ public class ChatService {
                 message.markAsRead();
             }
         }
+    }
+
+    public boolean existsUnreadMessages(Long userId){
+        return chatMessageRepository
+                .existsByReceiverUserIdAndIsReadFalse(userId);
     }
 }
