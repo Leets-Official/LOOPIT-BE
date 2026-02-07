@@ -16,4 +16,6 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
 
     // 해당 방에 내가 안 읽은 메시지가 존재하는지 확인
     boolean existsByChatRoomIdAndSenderUserIdNotAndIsReadFalse(Long chatRoomId, Long userId);
+
+    boolean existsByReceiverUserIdAndIsReadFalse(Long receiverId);
 }
