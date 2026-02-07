@@ -66,6 +66,10 @@ public class ChatRestController {
         return ResponseEntity.ok(ApiResponse.ok(responses, "채팅 내역 조회 및 읽음 처리 완료."));
     }
 
+    @Operation(
+            summary = "읽지 않은 채팅 존재 여부 조회(네비게이션 바 알림 용)",
+            description = "Boolean값으로 반환, 로그인 된 사용자에 대해 읽지 않은 채팅 존재 시 true, 없으면 false"
+    )
     @GetMapping("/check")
     public ResponseEntity<ApiResponse<Boolean>> checkNewMessages(@Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
         // 현재 로그인한 사용자의 ID를 넘겨 읽지 않은 메시지 존재 여부 확인
