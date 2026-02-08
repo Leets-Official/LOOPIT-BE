@@ -5,22 +5,34 @@ services:
     image: loopit543/loopit-prod:latest
     container_name: loopit-prod-app
     env_file:
-      - .env.prod
-    restart: always
+      - .env
+    restart: unless-stopped
     ports:
-      - "8082:8080"
+      - "443:8080"
     environment:
+      # application.yml 적용 후 application-prod.yml 적용.
       SPRING_PROFILES_ACTIVE: prod
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
       TZ: Asia/Seoul
+      # SSL 인증서 파일 컨테이너 내부로 연결
+    volumes:
+      - /etc/letsencrypt/live/loopit-api.kro.kr/keystore.p12:/app/keystore.p12
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
   mysql:
     image: mysql:8.0
     container_name: loopit-mysql
-    restart: always
-    ports:
-      - "3306:3306"
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: "unless-stopped"
     environment:
       MYSQL_DATABASE: loopit
       MYSQL_USER: ${DB_USERNAME}
@@ -29,6 +41,18 @@ services:
       TZ: Asia/Seoul
     volumes:
       - mysql-data:/var/lib/mysql
+    command:
+      - "--default-authentication-plugin=mysql_native_password"
+      - "--performance-schema=off"
+      - "--innodb-buffer-pool-size=64M"
+      - "--max-connections=50"
+      - "--table-open-cache=200"
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
 
 volumes:
   mysql-data:
