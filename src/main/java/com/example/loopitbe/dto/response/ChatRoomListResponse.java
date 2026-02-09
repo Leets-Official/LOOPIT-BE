@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 // 채팅방 목록 조회용
 public class ChatRoomListResponse {
     private Long roomId;
+    private Long postId;
     private Long partnerId;
     private String partnerNickname;
     private String partnerProfileImage;
@@ -22,10 +23,11 @@ public class ChatRoomListResponse {
     public ChatRoomListResponse() {}
 
     public ChatRoomListResponse(
-            Long roomId, Long partnerId, String partnerNickname, String partnerProfileImage,
+            Long roomId, Long postId, Long partnerId, String partnerNickname, String partnerProfileImage,
             String lastMessage, LocalDateTime lastMessageAt, String thumbnail,
             boolean hasUnreadMessages) {
         this.roomId = roomId;
+        this.postId = postId;
         this.partnerId = partnerId;
         this.partnerNickname = partnerNickname;
         this.partnerProfileImage = partnerProfileImage;
@@ -44,6 +46,7 @@ public class ChatRoomListResponse {
 
         return new ChatRoomListResponse(
                 room.getId(),
+                room.getSellPost().getId(),
                 partner.getUserId(),
                 partner.getNickname(),
                 partner.getProfileImage(),
@@ -56,6 +59,7 @@ public class ChatRoomListResponse {
 
     // Getters
     public Long getRoomId() { return roomId; }
+    public Long getPostId() { return postId;}
     public Long getPartnerId() { return partnerId; }
     public String getPartnerNickname() { return partnerNickname; }
     public String getPartnerProfileImage() { return partnerProfileImage; }
