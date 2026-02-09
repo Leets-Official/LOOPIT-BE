@@ -142,7 +142,7 @@ public class TransactionService {
     @Transactional(readOnly = true)
     public List<MySellListResponse> getSellHistory(Long userId, String statusStr) {
         PostStatus status;
-        // statusStr에 ALL(전체), RESERVED(예약중), COMPLETED(판매완료) 이외의 값은 예외처리
+        // statusStr에 ALL(전체), SALE(판매중), RESERVED(예약중), COMPLETED(판매완료) 이외의 값은 예외처리
         try {
             // ALL인 경우 status에 null값
             status = "ALL".equals(statusStr) ? null : PostStatus.valueOf(statusStr.toUpperCase());

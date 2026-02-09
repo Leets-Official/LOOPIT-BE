@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
@@ -21,5 +22,10 @@ public interface SellPostRepository extends JpaRepository<SellPost, Long>, JpaSp
             Long currentPostId
     );
     Optional<SellPost> findByIdAndIsDeletedFalse(Long id);
+
+    @Query("SELECT s FROM SellPost s " +
+            "WHERE s.user.userId = :userId " +
+            "AND (:status IS NULL OR s.status = :status) " +
+            "AND s.isDeleted = false")
     List<SellPost> findAllByUser_UserIdAndStatusAndIsDeletedFalse(Long userId, PostStatus status);
 }
