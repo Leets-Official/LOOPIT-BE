@@ -82,31 +82,25 @@ public class ChatService {
 
     // 채팅방 생성 및 조회 메서드
     @Transactional
-    public ChatRoomDetailResponse createOrGetChatRoom(ChatRoomCreateRequest request) {
+    public ChatRoomDetailResponse createOrGetChatRoom(Long buyerId, Long postId) {
+        User buyer = userRepository.findById(buyerId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        SellPost sellPost = sellPostRepository.findByIdAndIsDeletedFalse(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        User seller = userRepository.findById(sellPost.getUser().getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 1. 이미 존재하는 채팅방인지 먼저 확인 (기존 참여자라면 게시글 삭제 여부와 상관없이 입장)
         Optional<ChatRoom> existingRoom = chatRoomRepository.findByBuyerUserIdAndSellerUserIdAndSellPostId(
-                request.getBuyerId(), request.getSellerId(), request.getSellPostId());
+                buyerId, seller.getUserId(), postId);
 
         if (existingRoom.isPresent()) {
             return ChatRoomDetailResponse.from(existingRoom.get());
         }
 
-        // 2. 방이 존재하지 않을 경우에만 새로 생성
-        SellPost sellPost = sellPostRepository.findById(request.getSellPostId())
-                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
-
-        // 방이 없는 상태에서 새 방을 만들려고 하는데 게시글이 삭제되었다면 차단
-        if (sellPost.isDeleted()) {
-            throw new CustomException(ErrorCode.POST_ALREADY_DELETED);
-        }
-
         // 3. 신규 채팅방 생성
-        User buyer = userRepository.findById(request.getBuyerId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        User seller = userRepository.findById(request.getSellerId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
         ChatRoom newRoom = new ChatRoom(buyer, seller, sellPost);
         ChatRoom savedRoom = chatRoomRepository.save(newRoom);
 

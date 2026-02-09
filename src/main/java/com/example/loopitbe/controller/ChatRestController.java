@@ -31,9 +31,11 @@ public class ChatRestController {
             summary = "채팅방 생성 및 연결",
             description = "채팅방을 생성하거나, 이미 존재하는 경우 기존 방 정보를 return"
     )
-    @PostMapping("/room")
-    public ResponseEntity<ApiResponse<ChatRoomDetailResponse>> createRoom(@RequestBody ChatRoomCreateRequest request) {
-        ChatRoomDetailResponse response = chatService.createOrGetChatRoom(request);
+    @PostMapping("/room/{postId}")
+    public ResponseEntity<ApiResponse<ChatRoomDetailResponse>> createRoom(
+            @PathVariable Long postId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
+        ChatRoomDetailResponse response = chatService.createOrGetChatRoom(userId, postId);
         return ResponseEntity.ok(ApiResponse.ok(response, "채팅방 연결 성공."));
     }
 
