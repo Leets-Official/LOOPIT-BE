@@ -36,13 +36,8 @@ public class SellPostSpecification {
 
             // 4. 시리즈 필터링
             if (condition.getSeries() != null && !condition.getSeries().isEmpty()) {
-                Subquery<String> subquery = query.subquery(String.class);
-                Root<Device> deviceRoot = subquery.from(Device.class);
-
-                subquery.select(deviceRoot.get("model"))
-                        .where(deviceRoot.get("series").in(condition.getSeries()));
-
-                predicates.add(root.get("model").in(subquery));
+                // Device 테이블 조회 제거하고, SellPost 테이블에서 직접 조회
+                predicates.add(root.get("series").in(condition.getSeries()));
             }
 
             // 5. 키워드 필터링
