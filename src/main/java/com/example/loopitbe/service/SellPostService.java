@@ -85,6 +85,9 @@ public class SellPostService {
         SellPost post = sellPostRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
+        User seller = userRepository.findById(post.getUser().getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         // 2. 비슷한 상품 조회 로직
         List<SimilarPostResponse> similarPostResponses = getSimilarPosts(post);
 
@@ -95,7 +98,7 @@ public class SellPostService {
         }
 
         // 4. DTO 변환 및 반환
-        return new SellPostDetailResponse(post, similarPostResponses, isLiked, userId.equals(post.getUser().getUserId()));
+        return new SellPostDetailResponse(post, similarPostResponses, isLiked, userId.equals(seller.getUserId()));
     }
 
     // 수정
