@@ -92,6 +92,11 @@ public class ChatService {
         User seller = userRepository.findById(sellPost.getUser().getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        // 본인의 게시물에 채팅방 생성 시
+        if (buyerId.equals(seller.getUserId())) {
+            throw new CustomException(ErrorCode.INVALID_CHATROOM_CREATE_REQUEST);
+        }
+
         // 1. 이미 존재하는 채팅방인지 먼저 확인 (기존 참여자라면 게시글 삭제 여부와 상관없이 입장)
         Optional<ChatRoom> existingRoom = chatRoomRepository.findByBuyerUserIdAndSellerUserIdAndSellPostId(
                 buyerId, seller.getUserId(), postId);
