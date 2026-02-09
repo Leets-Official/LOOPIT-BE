@@ -91,14 +91,16 @@ public class SellPostService {
         // 2. 비슷한 상품 조회 로직
         List<SimilarPostResponse> similarPostResponses = getSimilarPosts(post);
 
-        // 3. 찜 여부 확인 로직
+        // 3. 찜 여부, 판매자 본인 확인 로직
         boolean isLiked = false;
+        boolean isOwner = false;
         if (userId != null) {
             isLiked = postWishListRepository.existsByUser_UserIdAndSellPost_Id(userId, postId);
+            isOwner = userId.equals(seller.getUserId());
         }
 
         // 4. DTO 변환 및 반환
-        return new SellPostDetailResponse(post, similarPostResponses, isLiked, userId.equals(seller.getUserId()));
+        return new SellPostDetailResponse(post, similarPostResponses, isLiked, isOwner);
     }
 
     // 수정
