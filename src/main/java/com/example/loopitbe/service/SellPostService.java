@@ -95,7 +95,7 @@ public class SellPostService {
         }
 
         // 4. DTO 변환 및 반환
-        return new SellPostDetailResponse(post, similarPostResponses, isLiked);
+        return new SellPostDetailResponse(post, similarPostResponses, isLiked, userId.equals(post.getUser().getUserId()));
     }
 
     // 수정

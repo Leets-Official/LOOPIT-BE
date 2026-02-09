@@ -37,7 +37,10 @@ public class SellPostDetailResponse {
     // 사용자의 찜 여부
     private boolean isLiked;
 
-    public SellPostDetailResponse(SellPost post, List<SimilarPostResponse> similarPosts, boolean isLiked) {
+    // 로그인된 유저의 판매글인지 확인
+    private boolean isOwner;
+
+    public SellPostDetailResponse(SellPost post, List<SimilarPostResponse> similarPosts, boolean isLiked, boolean isOwner) {
         User seller = post.getUser();
 
         this.id = post.getId();
@@ -64,6 +67,7 @@ public class SellPostDetailResponse {
         this.similarPosts = similarPosts;
 
         this.isLiked = isLiked;
+        this.isOwner = isOwner;
     }
 
     // Getters
@@ -87,4 +91,5 @@ public class SellPostDetailResponse {
     public String getSellerProfileImage() { return sellerProfileImage; }
     public List<SimilarPostResponse> getSimilarPosts() { return similarPosts; }
     public boolean isLiked() { return isLiked; }
+    public boolean isOwner() { return isOwner; }
 }
