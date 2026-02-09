@@ -45,7 +45,7 @@ public class MySellListResponse {
         return price;
     }
 
-    public TransactionStatus getStatus() {
+    public PostStatus getStatus() {
         return status;
     }
 
