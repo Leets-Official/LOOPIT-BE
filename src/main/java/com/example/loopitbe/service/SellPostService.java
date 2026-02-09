@@ -58,13 +58,13 @@ public class SellPostService {
         return SellPostResponse.from(savedPost);
     }
 
-    public Page<UserSellPostResponse> getSellPostByUser(Long userId, int page) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    public Page<UserSellPostResponse> getSellPostByUser(Long postId, int page) {
+        SellPost post = sellPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
 
-        Page<SellPost> posts = sellPostRepository.findAllByUser_UserIdAndIsDeletedFalse(userId, pageable);
+        Page<SellPost> posts = sellPostRepository.findAllByUser_UserIdAndIsDeletedFalse(post.getUser().getUserId(), pageable);
 
         return posts.map(UserSellPostResponse::from);
     }

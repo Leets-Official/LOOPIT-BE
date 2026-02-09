@@ -46,11 +46,11 @@ public class SellPostController {
             summary = "사용자의 판매글 조회",
             description = "userId에 해당하는 판매글 리스트 return. 10개씩 페이지네이션 적용."
     )
-    @GetMapping("/{userId}")
+    @GetMapping("/seller/{postId}")
     public ResponseEntity<ApiResponse<Page<UserSellPostResponse>>> getSellPostByUser(
-            @PathVariable Long userId,
+            @PathVariable Long postId,
             @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.ok(ApiResponse.ok(sellPostService.getSellPostByUser(userId, page), "사용자 판매글 조회 성공."));
+        return ResponseEntity.ok(ApiResponse.ok(sellPostService.getSellPostByUser(postId, page), "사용자 판매글 조회 성공."));
     }
     // 판매글 목록 조회
     @Operation(
