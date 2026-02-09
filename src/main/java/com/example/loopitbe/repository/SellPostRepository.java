@@ -1,6 +1,7 @@
 package com.example.loopitbe.repository;
 
 import com.example.loopitbe.entity.SellPost;
+import com.example.loopitbe.enums.PostStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,4 +21,5 @@ public interface SellPostRepository extends JpaRepository<SellPost, Long>, JpaSp
             Long currentPostId
     );
     Optional<SellPost> findByIdAndIsDeletedFalse(Long id);
+    List<SellPost> findAllByUser_UserIdAndStatusAndIsDeletedFalse(Long userId, PostStatus status);
 }
