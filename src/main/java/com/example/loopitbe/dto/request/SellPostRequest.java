@@ -13,9 +13,9 @@ public class SellPostRequest {
     private Long price;
     private String description;
     private List<String> imageUrls;
-    private boolean isUsed;
+    private boolean used;
     private boolean hasScratch;
-    private boolean isScreenCracked;
+    private boolean screenCracked;
     private BatteryStatus batteryStatus;
 
     public SellPostRequest() {}
@@ -40,8 +40,14 @@ public class SellPostRequest {
     public Long getPrice() { return price; }
     public String getDescription() { return description; }
     public List<String> getImageUrls() { return imageUrls; }
-    public boolean isUsed() { return isUsed; }
     public boolean isHasScratch() { return hasScratch; }
-    public boolean isScreenCracked() { return isScreenCracked; }
     public BatteryStatus getBatteryStatus() { return batteryStatus; }
+
+    public boolean isUsed() {
+        return used;
+    }
+
+    public boolean isScreenCracked() {
+        return screenCracked;
+    }
 }
