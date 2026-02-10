@@ -58,7 +58,7 @@ public class SellPostDetailResponse {
         this.isUsed = post.isUsed();
         this.hasScratch = post.isHasScratch();
         this.isScreenCracked = post.isScreenCracked();
-        this.batteryStatus = post.getBatteryStatus().getDescription();
+        this.batteryStatus = post.getBatteryStatus().toString();
         this.postStatus = post.getStatus().getDescription();
 
         this.sellerNickname = seller.getNickname();
