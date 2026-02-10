@@ -69,7 +69,7 @@ public class SellPostService {
 
         Page<SellPost> posts = sellPostRepository.findAllByUser_UserIdAndIsDeletedFalse(post.getUser().getUserId(), pageable);
 
-        return new SellerSellPostResponse(seller.getUserId(),  seller.getProfileImage(), posts.map(UserSellPostResponse::from));
+        return new SellerSellPostResponse(seller.getNickname(),  seller.getProfileImage(), posts.map(UserSellPostResponse::from));
     }
     // 목록 조회
     @Transactional(readOnly = true)

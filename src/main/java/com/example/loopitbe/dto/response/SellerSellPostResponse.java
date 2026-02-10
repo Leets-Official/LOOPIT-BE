@@ -3,18 +3,18 @@ package com.example.loopitbe.dto.response;
 import org.springframework.data.domain.Page;
 
 public class SellerSellPostResponse {
-    private Long sellerId;
+    private String sellerNickName;
     private String profileImg;
     Page<UserSellPostResponse> sellPosts;
 
-    public SellerSellPostResponse(Long sellerId, String profileImg, Page<UserSellPostResponse> sellPosts) {
-        this.sellerId = sellerId;
+    public SellerSellPostResponse(String sellerNickName, String profileImg, Page<UserSellPostResponse> sellPosts) {
+        this.sellerNickName = sellerNickName;
         this.profileImg = profileImg;
         this.sellPosts = sellPosts;
     }
 
-    public Long getSellerId() {
-        return sellerId;
+    public String getSellerNickName() {
+        return sellerNickName;
     }
 
     public String getProfileImg() {
