@@ -35,7 +35,21 @@ public class ChatRestController {
     public ResponseEntity<ApiResponse<ChatRoomDetailResponse>> createRoom(
             @PathVariable Long postId,
             @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
-        ChatRoomDetailResponse response = chatService.createOrGetChatRoom(userId, postId);
+        ChatRoomDetailResponse response = chatService.createChatRoom(userId, postId);
+        return ResponseEntity.ok(ApiResponse.ok(response, "채팅방 연결 성공."));
+    }
+
+    // 기존 방 반환 정보 반환
+    @Operation(
+            summary = "채팅방 정보 조회",
+            description = "기존 방 정보를 return"
+    )
+    @GetMapping("/room/{postId}")
+    public ResponseEntity<ApiResponse<ChatRoomDetailResponse>> getRoomInfo(
+            @PathVariable Long postId,
+            @RequestParam Long partnerId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
+        ChatRoomDetailResponse response = chatService.getChatRoom(userId, partnerId, postId);
         return ResponseEntity.ok(ApiResponse.ok(response, "채팅방 연결 성공."));
     }
 
