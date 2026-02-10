@@ -17,7 +17,7 @@ services:
       TZ: Asia/Seoul
       # SSL 인증서 파일 컨테이너 내부로 연결
     volumes:
-      - /etc/letsencrypt/live/loopit-api.kro.kr/keystore.p12:/app/keystore.p12
+      - /etc/letsencrypt/live/loopit-api.r-e.kr/keystore.p12:/app/keystore.p12
     depends_on:
       mysql:
         condition: service_healthy

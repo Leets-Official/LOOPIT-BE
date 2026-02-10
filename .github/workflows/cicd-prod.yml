@@ -65,9 +65,9 @@ jobs:
       - name: Cleanup EC2 Directory
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.PROD_EC2_HOST }}
+          username: ${{ secrets.PROD_EC2_USER }}
+          key: ${{ secrets.PROD_EC2_SSH_KEY }}
           script: |
             # 이전에 잘못 생성된 docker/docker 구조가 있다면 삭제
             rm -rf /home/ubuntu/loopit-prod/docker/docker
@@ -77,9 +77,9 @@ jobs:
       - name: Copy .env
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.PROD_EC2_HOST }}
+          username: ${{ secrets.PROD_EC2_USER }}
+          key: ${{ secrets.PROD_EC2_SSH_KEY }}
           source: ".env"
           target: "/home/ubuntu/loopit-prod/docker/"
 
@@ -87,9 +87,9 @@ jobs:
       - name: Copy docker-compose
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.PROD_EC2_HOST }}
+          username: ${{ secrets.PROD_EC2_USER }}
+          key: ${{ secrets.PROD_EC2_SSH_KEY }}
           source: "docker/docker-compose.prod.yml"
           target: "/home/ubuntu/loopit-prod/docker/"
           strip_components: 1
@@ -97,9 +97,9 @@ jobs:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.PROD_EC2_HOST }}
+          username: ${{ secrets.PROD_EC2_USER }}
+          key: ${{ secrets.PROD_EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/loopit-prod/docker/
             
