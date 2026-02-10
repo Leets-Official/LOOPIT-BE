@@ -50,7 +50,7 @@ public class ChatRestController {
             @RequestParam Long partnerId,
             @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
         ChatRoomDetailResponse response = chatService.getChatRoom(userId, partnerId, postId);
-        return ResponseEntity.ok(ApiResponse.ok(response, "채팅방 연결 성공."));
+        return ResponseEntity.ok(ApiResponse.ok(response, "채팅방 정보 조회 성공."));
     }
 
     // 채팅방 목록 조회
