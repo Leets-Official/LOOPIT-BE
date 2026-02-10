@@ -3,6 +3,7 @@ package com.example.loopitbe.service;
 import com.example.loopitbe.dto.request.CancelTransactionRequest;
 import com.example.loopitbe.dto.request.CompleteTransactionRequest;
 import com.example.loopitbe.dto.request.CreateTransactionRequest;
+import com.example.loopitbe.dto.response.MySellListResponse;
 import com.example.loopitbe.dto.response.TransactionHistoryResponse;
 import com.example.loopitbe.entity.SellPost;
 import com.example.loopitbe.entity.Transaction;
@@ -139,18 +140,18 @@ public class TransactionService {
 
     // 판매 내역 조회
     @Transactional(readOnly = true)
-    public List<TransactionHistoryResponse> getSellHistory(Long userId, String statusStr) {
-        TransactionStatus status;
-        // statusStr에 ALL(전체), RESERVED(예약중), COMPLETED(판매완료) 이외의 값은 예외처리
+    public List<MySellListResponse> getSellHistory(Long userId, String statusStr) {
+        PostStatus status;
+        // statusStr에 ALL(전체), SALE(판매중), RESERVED(예약중), COMPLETED(판매완료) 이외의 값은 예외처리
         try {
             // ALL인 경우 status에 null값
-            status = "ALL".equals(statusStr) ? null : TransactionStatus.valueOf(statusStr.toUpperCase());
+            status = "ALL".equals(statusStr) ? null : PostStatus.valueOf(statusStr.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new CustomException(ErrorCode.INVALID_STATUS_VALUE);
         }
 
-        List<Transaction> sellHistory = transactionRepository.findAllSellHistory(userId, status);
+        List<SellPost> sellHistory = sellPostRepository.findAllByUser_UserIdAndStatusAndIsDeletedFalse(userId, status);
 
-        return sellHistory.stream().map(TransactionHistoryResponse::from).toList();
+        return sellHistory.stream().map(MySellListResponse::from).toList();
     }
 }

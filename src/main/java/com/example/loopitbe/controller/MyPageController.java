@@ -2,6 +2,7 @@ package com.example.loopitbe.controller;
 
 import com.example.loopitbe.common.ApiResponse;
 import com.example.loopitbe.dto.response.MyPageResponse;
+import com.example.loopitbe.dto.response.MySellListResponse;
 import com.example.loopitbe.dto.response.TransactionHistoryResponse;
 import com.example.loopitbe.service.MyPageService;
 import com.example.loopitbe.service.TransactionService;
@@ -51,13 +52,13 @@ public class MyPageController {
 
     @Operation(
             summary = "판매 내역 조회",
-            description = "status에 RESERVED(예약중) 혹은 COMPLETED(판매완료) 값으로 요청. (값 지정 안할 시 ALL)"
+            description = "status에 SALE(판매중), RESERVED(예약중) 혹은 COMPLETED(판매완료) 값으로 요청. (값 지정 안할 시 ALL)"
     )
     @GetMapping("/history/sell")
-    public ResponseEntity<ApiResponse<List<TransactionHistoryResponse>>> getSellHistory(
+    public ResponseEntity<ApiResponse<List<MySellListResponse>>> getSellHistory(
             @Parameter(hidden = true) @AuthenticationPrincipal Long userId,
             @RequestParam(defaultValue = "ALL") String status) {
-        List<TransactionHistoryResponse> responses = transactionService.getSellHistory(userId, status);
+        List<MySellListResponse> responses = transactionService.getSellHistory(userId, status);
         return ResponseEntity.ok(ApiResponse.ok(responses, "판매 내역 조회 성공."));
     }
 }
