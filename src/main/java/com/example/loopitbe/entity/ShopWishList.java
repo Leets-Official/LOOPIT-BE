@@ -15,11 +15,13 @@ public class ShopWishList {
 
     private String shopName;
     private String location;
+    private String phone;   // 하이픈까지 포함
 
     public ShopWishList(User user, ShopWishlistToggleRequest dto) {
         this.user = user;
         this.shopName = dto.getShopName();
         this.location = dto.getLocation();
+        this.phone = dto.getPhone();
     }
 
     protected ShopWishList() {
@@ -41,4 +43,6 @@ public class ShopWishList {
     public String getLocation() {
         return location;
     }
+
+    public String getPhone() { return phone; }
 }
