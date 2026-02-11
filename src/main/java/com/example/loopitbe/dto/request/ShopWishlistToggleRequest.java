@@ -1,8 +1,13 @@
 package com.example.loopitbe.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class ShopWishlistToggleRequest {
+    @NotBlank
     private String shopName;
+    @NotBlank
     private String location;
+    @NotBlank
     private String phone;
 
     public String getShopName() {
