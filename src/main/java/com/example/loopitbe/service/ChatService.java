@@ -82,7 +82,7 @@ public class ChatService {
 
     // 채팅방 생성 및 조회 메서드
     @Transactional
-    public ChatRoomDetailResponse createOrGetChatRoom(Long buyerId, Long postId) {
+    public ChatRoomDetailResponse createChatRoom(Long buyerId, Long postId) {
         User buyer = userRepository.findById(buyerId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -91,11 +91,6 @@ public class ChatService {
 
         User seller = userRepository.findById(sellPost.getUser().getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        // 본인의 게시물에 채팅방 생성 시
-        if (buyerId.equals(seller.getUserId())) {
-            throw new CustomException(ErrorCode.INVALID_CHATROOM_CREATE_REQUEST);
-        }
 
         // 1. 이미 존재하는 채팅방인지 먼저 확인 (기존 참여자라면 게시글 삭제 여부와 상관없이 입장)
         Optional<ChatRoom> existingRoom = chatRoomRepository.findByBuyerUserIdAndSellerUserIdAndSellPostId(
@@ -110,6 +105,24 @@ public class ChatService {
         ChatRoom savedRoom = chatRoomRepository.save(newRoom);
 
         return ChatRoomDetailResponse.from(savedRoom);
+    }
+
+    public ChatRoomDetailResponse getChatRoom(Long userId, Long partnerId, Long postId){
+        SellPost sellPost = sellPostRepository.findByIdAndIsDeletedFalse(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        User seller = userRepository.findById(sellPost.getUser().getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        boolean isSeller = seller.getUserId().equals(userId);
+
+        Optional<ChatRoom> existingRoom = chatRoomRepository.findByBuyerUserIdAndSellerUserIdAndSellPostId(
+                isSeller ? partnerId : userId, seller.getUserId(), postId);
+
+        if (existingRoom.isPresent())
+            return ChatRoomDetailResponse.from(existingRoom.get());
+        else
+            throw new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND);
     }
 
     // 모든 채팅방 조회
