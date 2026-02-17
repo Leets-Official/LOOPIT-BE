@@ -7,7 +7,6 @@ public class ShopWishlistToggleRequest {
     private String shopName;
     @NotBlank
     private String location;
-    @NotBlank
     private String phone;
 
     public String getShopName() {
