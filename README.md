@@ -1,3 +1,5 @@
+<div align="center">
+
 # 📱 LOOPIT-BE
 
 > **IT 수리점 찾기 및 중고판매 서비스 플랫폼, LOOPIT의 백엔드 서버 저장소입니다. (2025.12.22 ~ 2026.2.13)**
@@ -22,21 +24,19 @@
       <a href="https://github.com/gichanGim">
         <img src="https://github.com/gichanGim.png" width="100px;" alt=""/>
       </a>
-      <br />
     </td>
     <td align="center">
       <a href="https://github.com/sxvxnxwt">
         <img src="https://github.com/sxvxnxwt.png" width="100px;" alt=""/>
       </a>
-      <br />
     </td>
     <td align="center">
       <a href="https://github.com/soyun-git121">
         <img src="https://github.com/soyun-git121.png" width="100px;" alt=""/>
       </a>
-      <br />
     </td>
   </tr>
+  <tr>
     <td align="center">
       <a href="https://github.com/gichanGim" title="Code">김기찬(파트장)</a>
     </td>
@@ -46,8 +46,6 @@
     <td align="center">
       <a href="https://github.com/soyun-git121" title="Code">박소윤</a>
     </td>
-  <tr>
-    
   </tr>
 </table>
 
@@ -56,14 +54,41 @@
 ## 📖 Project Overview
 ### **LOOPIT**은 중고 IT 기기 판매, 근처 IT기기 수리점 탐색 및 챗봇을 통해 수리비 견적 솔루션을 제공하는 플랫폼입니다.<br>
 이 리포지토리는 LOOPIT의 핵심 비즈니스 로직과 데이터 처리를 담당하는 **RESTful API 서버**입니다.<br>
-
+  
 ### ✨ Key Features
-* 사용자 인증/인가 (JWT, Kakao OAuth)
-* 중고 IT 기기 매물 등록, 검색, 필터링 및 CRUD
-* Kakao Maps API 기반 근처 IT기기 수리점 탐색
-* WebSocket(STOMP), Redis pub/sub 로직 기반 구매자-판매자 1:1 실시간 채팅
-* Google Gemini API를 활용한 맞춤형 챗봇 서비스 (공식/사설 수리점 비용 비교하여 수리비 견적 산출)
-* 거래 단계별 상태 관리 (판매중 → 예약중 → 거래완료)
+
+<table border="0" align="center">
+  <tr>
+    <td width="50%" align="center">
+      🔐 <b>User Auth</b><br>
+      JWT, OAuth 기반 사용자 인증/인가
+    </td>
+    <td width="50%" align="center">
+      📦 <b>Marketplace</b><br>
+      중고 IT 기기 매물 CRUD 및 검색
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      📍 <b>Map Service</b><br>
+      Kakao Maps API 기반 수리점 탐색
+    </td>
+    <td align="center">
+      💬 <b>Real-time Chat</b><br>
+      WebSocket/Redis 기반 1:1 채팅
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      🤖 <b>AI Solution</b><br>
+      Gemini API 활용 수리비 견적 비교
+    </td>
+    <td align="center">
+      🏷️ <b>Transaction</b><br>
+      거래 단계별(판매/예약/완료) 상태 관리
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -71,5 +96,6 @@
 
 ![Leets6기_최종발표_(Loopit)-이미지-17](https://github.com/user-attachments/assets/fcb32291-68cf-4250-a9f7-70adae6cdb4f)
 
-
 ---
+
+</div>
