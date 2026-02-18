@@ -4,14 +4,6 @@
 
 > **IT 수리점 찾기 및 중고판매 서비스 플랫폼, LOOPIT의 백엔드 서버 저장소입니다. (2025.12.22 ~ 2026.2.13)**
 
-![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
-![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
-![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)
-![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)
-![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
-![Amazon S3](https://img.shields.io/badge/Amazon%20S3-FF9900?style=for-the-badge&logo=amazons3&logoColor=white)
-![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
-![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)<br>
 ![Leets6기_최종발표_(Loopit)-이미지-0](https://github.com/user-attachments/assets/314e4e6f-cf67-4337-8065-5ccc6d8c9cff)
 
 ---
@@ -54,7 +46,11 @@
 ## 📖 Project Overview
 ### **LOOPIT**은 중고 IT 기기 판매, 근처 IT기기 수리점 탐색 및 챗봇을 통해<br> 수리비 견적 솔루션을 제공하는 플랫폼입니다<br>
 이 리포지토리는 LOOPIT의 핵심 비즈니스 로직과 데이터 처리를 담당하는 **RESTful API 서버**입니다.<br>
-  
+
+### 🌐 Deployment
+
+🔗 Service URL: https://www.loopit.kro.kr/
+
 ### ✨ Key Features
 
 <table border="0" align="center">
@@ -89,6 +85,32 @@
     </td>
   </tr>
 </table>
+
+---
+
+## 🛠 Tech Stack
+
+<div align="center">
+
+### Language & Framework
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+
+### Database & Storage
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![Amazon S3](https://img.shields.io/badge/Amazon%20S3-FF9900?style=for-the-badge&logo=amazons3&logoColor=white)
+
+### DevOps & Infrastructure
+![Amazon EC2](https://img.shields.io/badge/Amazon_EC2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+
+### Documentation & Collaboration
+![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
+![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)
+
+</div>
 
 ---
 
