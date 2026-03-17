@@ -12,6 +12,11 @@
 
 <table>
   <tr>
+    <th align="center">BackEnd Lead</th>
+    <th align="center">BackEnd</th>
+    <th align="center">BackEnd</th>
+  </tr>
+  <tr>
     <td align="center">
       <a href="https://github.com/gichanGim">
         <img src="https://github.com/gichanGim.png" width="100px;" alt=""/>
@@ -30,7 +35,7 @@
   </tr>
   <tr>
     <td align="center">
-      <a href="https://github.com/gichanGim" title="Code">김기찬(파트장)</a>
+      <a href="https://github.com/gichanGim" title="Code">김기찬</a>
     </td>
     <td align="center">
       <a href="https://github.com/sxvxnxwt" title="Code">김민지</a>
